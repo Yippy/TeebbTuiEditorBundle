@@ -113,17 +113,70 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $dependenciesCssHtml = "";
 
         if ($this->options['jquery']) {
-            $dependenciesJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['jquery_path']));
+            $dependenciesJsHtml .= $this->renderScriptBlock($this->options['jquery_path']);
         }
         foreach ($dependencies as $dependency) {
+            if ($dependency['module_js_path'] !== null) {
+                $dependenciesJsHtml .= $this->renderScriptModuleBlock($dependency['module_js_path']);
+            }
             if ($dependency['js_path'] !== null) {
-                $dependenciesJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($dependency['js_path']));
+                $dependenciesJsHtml .= $this->renderScriptBlock($dependency['js_path']);
             }
             if ($dependency['css_path'] !== null) {
-                $dependenciesCssHtml .= sprintf('<link rel="stylesheet" href="%s">', $this->fixPath($dependency['css_path']));
+                $dependenciesCssHtml .= $this->renderStyleBlock($dependency['css_path']);
             }
         }
         return $dependenciesJsHtml . $dependenciesCssHtml;
+    }
+
+    public function renderScriptBlock(string $path): string
+    {
+        return sprintf('<script src="%s"></script>', $this->fixPath($path));
+    }
+
+    public function renderScriptModuleBlock(string $path): string
+    {
+        return sprintf('<script type="module" src="%s"></script>', $this->fixPath($path));
+    }
+
+
+    public function renderStyleBlock(string $path): string
+    {
+        return sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($path));
+    }
+
+    public function renderExtensions($extensions): string
+    {
+        $extsJsHtml = "";
+        $extsCssHtml = "";
+
+        if (null !== $extensions) {
+            foreach ($extensions as $extKey => $extValue) {
+                switch ($extValue) {
+                    case 'editor_plugin_color_syntax':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_color_syntax']['tui_code_color_syntax_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_color_syntax']['tui_code_color_syntax_css_path']);
+                        break;
+                    case 'editor_plugin_chart':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_js_path']);
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_plugin_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_css_path']);
+                        break;
+                    case 'editor_plugin_code_syntax_highlight':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_code_syntax_highlight']['tui_code_syntax_highlight_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_code_syntax_highlight']['tui_code_syntax_highlight_css_path']);
+                        break;
+                    case 'editor_plugin_table_merged_cell':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_table_merged_cell']['tui_table_merged_cell_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_table_merged_cell']['tui_table_merged_cell_css_path']);
+                        break;
+                    case 'editor_plugin_uml':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_uml']['tui_uml_js_path']);
+                        break;
+                }
+            }
+        }
+        return $extsJsHtml.$extsCssHtml;
     }
 
     public function renderViewer(string $id, string $content, string $viewerJsPath = null): string
@@ -134,36 +187,10 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         }
         $extensions = $this->options['configs'][$this->options['default_config']]['exts'];
 
-        $viewerJsCode = sprintf('<script src="%s"></script>', $this->fixPath($viewerJsPath));
-        $viewerCssCode = sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['editor_contents_css_path']));
+        $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
+        $viewerCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
 
-        $extsJsHtml = "";
-        $extsCssHtml = "";
-
-        if (null !== $extensions) {
-            foreach ($extensions as $extKey => $extValue) {
-                switch ($extValue) {
-                    case 'colorSyntax':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['colorSyntax']['tui_color_picker_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['colorSyntax']['extColorSyntax_js_path']));
-                        $extsCssHtml .= sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['extensions']['colorSyntax']['tui_color_picker_css_path']));
-                        break;
-                    case 'uml':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['uml']['plantuml_encoder_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['uml']['extUML_js_path']));
-                        break;
-                    case 'chart':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['raphael_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['tui_chart_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['extChart_js_path']));
-                        $extsCssHtml .= sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['extensions']['chart']['tui_chart_css_path']));
-                        break;
-                    case 'table':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['table']['extTable_js_path']));
-                        break;
-                }
-            }
-        }
+        $extsHtml = $this->renderExtensions($extensions);
 
         $viewerJsScript = sprintf(
             '<script class="code-js">' .
@@ -182,7 +209,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixArrayToJs($extensions, "scrollSync")
         );
 
-        return $viewerJsCode . $viewerCssCode . $extsJsHtml . $extsCssHtml . $viewerJsScript;
+        return $viewerJsCode . $viewerCssCode . $extsHtml . $viewerJsScript;
     }
 
     private function fixArrayToJs(array $array, ?string $exclude = null): string
@@ -268,36 +295,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $editorCssCode = sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['editor_css_path']));
         $editorContentsCssCode = sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['editor_contents_css_path']));
 
-        $extsJsHtml = "";
-        $extsCssHtml = "";
-
-        if (null !== $extensions) {
-            foreach ($extensions as $extKey => $extValue) {
-                switch ($extValue) {
-                    case 'scrollSync':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['scrollSync']['extScrollSync_js_path']));
-                        break;
-                    case 'colorSyntax':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['colorSyntax']['tui_color_picker_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['colorSyntax']['extColorSyntax_js_path']));
-                        $extsCssHtml .= sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['extensions']['colorSyntax']['tui_color_picker_css_path']));
-                        break;
-                    case 'uml':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['uml']['plantuml_encoder_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['uml']['extUML_js_path']));
-                        break;
-                    case 'chart':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['raphael_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['tui_chart_js_path']));
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['chart']['extChart_js_path']));
-                        $extsCssHtml .= sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['extensions']['chart']['tui_chart_css_path']));
-                        break;
-                    case 'table':
-                        $extsJsHtml .= sprintf('<script src="%s"></script>', $this->fixPath($this->options['extensions']['table']['extTable_js_path']));
-                        break;
-                }
-            }
-        }
+        $extsHtml = $this->renderExtensions($extensions);
 
         $editorJsScript = sprintf(
             '<script class="code-js">' .
@@ -322,6 +320,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixArrayToJs($extensions)
         );
 
-        return $editorJsCode . $editorCssCode . $editorContentsCssCode . $extsJsHtml . $extsCssHtml . $editorJsScript;
+        return $editorJsCode . $editorCssCode . $editorContentsCssCode . $extsHtml . $editorJsScript;
     }
 }
