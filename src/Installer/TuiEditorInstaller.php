@@ -110,7 +110,7 @@ final class TuiEditorInstaller
     private function clear(array $options): string
     {
 
-        if (!file_exists($options['path'].'/tui.editor-bundles/tui-editor/dist/tui-editor-Editor.js')) {
+        if (!file_exists($options['path'].'/tui.editor-bundles/node_modules/@toast-ui/editor/dist/toastui-editor.js')) {
             return self::CLEAR_DROP;
         }
 
