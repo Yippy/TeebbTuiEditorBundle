@@ -206,7 +206,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $id,
             $id,
             "300px",
-            $this->fixArrayToJs($extensions, "scrollSync")
+            $this->fixArrayToJs($extensions)
         );
 
         return $viewerJsCode . $viewerCssCode . $extsHtml . $viewerJsScript;

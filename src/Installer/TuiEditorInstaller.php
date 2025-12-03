@@ -7,6 +7,7 @@ namespace Teebb\TuiEditorBundle\Installer;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teebb\TuiEditorBundle\Exception\BadProxyUrlException;
+use Teebb\TuiEditorBundle\Config\TuiEditorConfigurationInterface;
 
 final class TuiEditorInstaller
 {
@@ -62,8 +63,6 @@ final class TuiEditorInstaller
      */
     private static $archive = 'https://github.com/%s/archive/%s.zip';
 
-    private $repository = 'teebbstudios/tui.editor-bundles';
-
     private $version;
 
     /**
@@ -71,8 +70,12 @@ final class TuiEditorInstaller
      */
     private $resolver;
 
+    /**
+     * @var TuiEditorConfigurationInterface
+     */
+    private $configuration;
 
-    public function __construct(array $options = [])
+    public function __construct(TuiEditorConfigurationInterface $configuration, array $options = [])
     {
         $this->resolver = (new OptionsResolver())
             ->setDefaults(array_merge([
@@ -86,6 +89,7 @@ final class TuiEditorInstaller
             ->setNormalizer('path', function (Options $options, $path) {
                 return rtrim($path, '/');
             });
+        $this->configuration = $configuration;
     }
 
     public function install(array $options = []): bool
@@ -180,13 +184,13 @@ final class TuiEditorInstaller
 
         $this->notify(self::NOTIFY_GET_DOWNLOAD_URL, null, $options['notifier']);
 
-        $repoApiUrl = sprintf(self::$archiveApi, $this->repository);
+        $repoApiUrl = sprintf(self::$archiveApi, $this->configuration->getAssetRepository());
 
         $apiResponseJson = json_decode(file_get_contents($repoApiUrl, false, $this->createHttpGetContext()), true);
 
         $this->version = $apiResponseJson['tag_name'];
 
-        $downloadUrl = sprintf(self::$archive, $this->repository, $this->version);
+        $downloadUrl = sprintf(self::$archive, $this->configuration->getAssetRepository(), $this->version);
 
         $this->notify(self::NOTIFY_DOWNLOAD_URL, $downloadUrl, $options['notifier']);
 

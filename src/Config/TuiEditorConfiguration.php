@@ -72,6 +72,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
      */
     private $dependencies;
 
+    /**
+     * @var string
+     */
+    private $assetRepository;
+
     public function __construct(array $config)
     {
         if ($config['enable']) {
@@ -90,6 +95,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         $this->configs = $config['configs'];
         $this->extensions = $config['extensions'];
         $this->dependencies = $config['dependencies'];
+        $this->assetRepository = $config['asset_repository'];
 
     }
 
@@ -175,6 +181,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     public function getDependencies(): array
     {
         return $this->dependencies;
+    }
+
+    public function getAssetRepository(): string
+    {
+        return $this->assetRepository;
     }
 
     public function getConfig(string $name): array

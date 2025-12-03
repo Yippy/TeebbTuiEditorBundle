@@ -79,29 +79,33 @@ You can add a config file in `config/packages` folder.（Just a simple config, B
 ```yaml
 #config/packages/teebb_tuieditor.yaml
 teebb_tui_editor:
-    #enable: true                           # Whether to enable tui.editor.
-    #jquery: true                           # Whether to enable jquery in dependencies.
-    #jquery_path: ~                         # Custom jquery path.
-    #editor_js_path: ~                      # Custom tui.editor js path.
-    # ...                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
+    #enable: true                                           # Whether to enable tui.editor.
+    #jquery: true                                           # Whether to enable jquery in dependencies.
+    #jquery_path: ~                                         # Custom jquery path.
+    #editor_js_path: ~                                      # Custom tui.editor js path.
+    #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
+    # ...                                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
     
     default_config: basic_config
 
     configs:
         basic_config:
-            to_html: false                  # Save to database use html syntax?
-            #previewStyle: 'vertical'       # Markdown editor's preview style (tab, vertical)
-            #height: '400px'                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-            #initialEditType: 'markdown'    # Initial editor type (markdown, wysiwyg)
-            exts:                           # exts must defined as array
-                - scrollSync
-                - colorSyntax
-                - uml
-                - chart
-                - mark
-                - table
+            to_html: false                                  # Save to database use html syntax?
+            #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
+            #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+            #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
+            exts:                                           # exts must defined as array
+                - editor_plugin_color_syntax
+                - editor_plugin_chart
+                - editor_plugin_code_syntax_highlight
+                - editor_plugin_table_merged_cell
+                - editor_plugin_uml
 
 ```
+
+> [!CAUTION]
+> asset_repository config is the GitHub repository that will be used for the `php bin/console tuieditor:install` command, the script will look for the latest release and download all files into the TeebbTuiEditorBundle `src/Resources/public` folder. Use only trusted repository for this bundle.
+
 You can config tui.editor language. 
 ```yaml
 #config/services.yaml
@@ -110,7 +114,6 @@ parameters:
     locale: 'zh_CN'                   # Change the locale
 
 ```
-
 
 ### Step 5: Use the Bundle
 
@@ -123,21 +126,23 @@ This will add the tui.editor dependencies JS and CSS libs like:
 
 ```html
 
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/jquery/dist/jquery.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/markdown-it/dist/markdown-it.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/tui-code-snippet/dist/tui-code-snippet.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/codemirror/lib/codemirror.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/highlight/highlight.pack.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/squire-rte/build/squire-raw.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/to-mark/dist/to-mark.min.js"></script>
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/lib/codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/lib/highlight/styles/github.css">
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/dompurify/dist/purify.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/orderedmap/dist/index.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-decoder.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/prismjs/prism.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/prosemirror-bundle.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/w3c-keyname/index.js"></script>
+<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.css">
 
 ```
 
 Second, use the `TuiEditorType` in your form field:
 
 ```php
+use Teebb\TuiEditorBundle\Form\Type\TuiEditorType;
+
 class ArticleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

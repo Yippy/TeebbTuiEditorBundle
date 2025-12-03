@@ -75,29 +75,33 @@ $ php bin/console assets:install --symlink
 ```yaml
 #config/packages/teebb_tuieditor.yaml
 teebb_tui_editor:
-    #enable: true                           # 是否启用tui.editor
-    #jquery: true                           # 是否使用jquery, 如果您的项目中使用过jquery,可以设置为false,避免重复引入jquery
-    #jquery_path: ~                         # 自定义jquery路径.
-    #editor_js_path: ~                      # 自定义editor js 路径
-    # ...                                   # 更多配置使用命令: bin/console debug:config teebb_tui_editor 查看
+    #enable: true                                           # 是否启用tui.editor
+    #jquery: true                                           # 是否使用jquery, 如果您的项目中使用过jquery,可以设置为false,避免重复引入jquery
+    #jquery_path: ~                                         # 自定义jquery路径.
+    #editor_js_path: ~                                      # 自定义editor js 路径
+    #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
+    # ...                                                   # 更多配置使用命令: bin/console debug:config teebb_tui_editor 查看
     
     default_config: basic_config
 
     configs:
         basic_config:
-            to_html: false                  # Save to database use html syntax?
-            #previewStyle: 'vertical'       # Markdown editor's preview style (tab, vertical)
-            #height: '400px'                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-            #initialEditType: 'markdown'    # Initial editor type (markdown, wysiwyg)
-            exts:                           # exts must defined as array
-                - scrollSync
-                - colorSyntax
-                - uml
-                - chart
-                - mark
-                - table
+            to_html: false                                  # Save to database use html syntax?
+            #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
+            #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+            #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
+            exts:                                           # exts must defined as array
+                - editor_plugin_color_syntax
+                - editor_plugin_chart
+                - editor_plugin_code_syntax_highlight
+                - editor_plugin_table_merged_cell
+                - editor_plugin_uml
 
 ```
+
+> [!CAUTION]
+> asset_repository config is the GitHub repository that will be used for the `php bin/console tuieditor:install` command, the script will look for the latest release and download all files into the TeebbTuiEditorBundle `src/Resources/public` folder. Use only trusted repository for this bundle.
+
 您可以修改tui.editor的语言显示。
 ```yaml
 #config/services.yaml
@@ -117,19 +121,21 @@ parameters:
 这一步会把tui.editor所有的依赖js库添加到页面, 最终的html代码如下：
 
 ```html
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/jquery/dist/jquery.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/markdown-it/dist/markdown-it.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/tui-code-snippet/dist/tui-code-snippet.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/codemirror/lib/codemirror.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/highlight/highlight.pack.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/squire-rte/build/squire-raw.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/lib/to-mark/dist/to-mark.min.js"></script>
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/lib/codemirror/lib/codemirror.css">
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/lib/highlight/styles/github.css">
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/dompurify/dist/purify.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/orderedmap/dist/index.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-decoder.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/prismjs/prism.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/prosemirror-bundle.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.js"></script>
+<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/w3c-keyname/index.js"></script>
+<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.css">
 ```
 再在您的表单对应字段中使用TeebbTuiEditorBundle预先定义好的类型`TuiEditorType`, 如下:
 
 ```php
+use Teebb\TuiEditorBundle\Form\Type\TuiEditorType;
+
 class ArticleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)

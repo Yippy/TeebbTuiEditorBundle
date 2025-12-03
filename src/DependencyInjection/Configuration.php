@@ -31,6 +31,7 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('editor_contents_css_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/node_modules/@toast-ui/editor/dist/toastui-editor-viewer.css')->end()
                 ->scalarNode('jquery_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/node_modules/jquery/dist/jquery.min.js')->end()
                 ->scalarNode('default_config')->defaultValue(null)->end()
+                ->scalarNode('asset_repository')->defaultValue('teebbstudios/tui.editor-bundles')->end()
                 ->append($this->createExtensions())
                 ->append($this->createDependencies())
                 ->append($this->createConfigsNode())

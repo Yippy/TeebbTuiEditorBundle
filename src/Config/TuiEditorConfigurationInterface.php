@@ -34,6 +34,8 @@ interface TuiEditorConfigurationInterface
 
     public function getDependencies(): array;
 
+    public function getAssetRepository(): string;
+
     /**
      * @throws ConfigException
      */
