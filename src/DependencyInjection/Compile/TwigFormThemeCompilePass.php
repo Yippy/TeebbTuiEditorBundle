@@ -14,7 +14,7 @@ class TwigFormThemeCompilePass implements CompilerPassInterface
     {
         //add tuieditor_widget.html.twig to form_theme
         $form_theme_old = $container->getParameter('twig.form.resources');
-        $form_theme = array_merge($form_theme_old, ['@TeebbTuiEditor/Form/tuieditor_widget.html.Twig']);
+        $form_theme = array_merge($form_theme_old, ['@TeebbTuiEditor/Form/tuieditor_widget.html.twig']);
 
         $container->getDefinition('twig.form.engine')->replaceArgument(0, $form_theme);
     }
