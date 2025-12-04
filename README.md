@@ -95,11 +95,11 @@ teebb_tui_editor:
             #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
             exts:                                           # exts must defined as array
-                - editor_plugin_color_syntax
-                - editor_plugin_chart
-                - editor_plugin_code_syntax_highlight
-                - editor_plugin_table_merged_cell
-                - editor_plugin_uml
+                - chart
+                - code-syntax-highlight
+                - color-syntax
+                - table-merged-cell
+                - uml
 
 ```
 
