@@ -7,6 +7,7 @@
     <services>
         <service id="tui_editor.installer" class="Teebb\TuiEditorBundle\Installer\TuiEditorInstaller">
             <argument type="service" id="teebb_tui_editor.configuration" />
+            <argument type="collection" id="options"/>
         </service>
     </services>
 </container>
