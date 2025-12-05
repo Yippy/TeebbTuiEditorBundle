@@ -89,6 +89,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         $this->editorJsPath = $config['editor_js_path'];
         $this->viewerJsPath = $config['viewer_js_path'];
         $this->editorCssPath = $config['editor_css_path'];
+        $this->viewerCssPath = $config['viewer_css_path'];
         $this->editorContentsCssPath = $config['editor_contents_css_path'];
         $this->jqueryPath = $config['jquery_path'];
         $this->defaultConfig = $config['default_config'];
@@ -150,6 +151,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     public function getEditorCssPath(): string
     {
         return $this->editorCssPath;
+    }
+
+    public function getViewerCssPath(): string
+    {
+        return $this->viewerCssPath;
     }
 
     public function getEditorContentsCssPath(): string

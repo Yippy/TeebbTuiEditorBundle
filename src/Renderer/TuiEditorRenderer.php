@@ -95,6 +95,15 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return $this->fixPath($editorCssPath);
     }
 
+    public function renderViewerCssPath(string $viewerCssPath = null): string
+    {
+        if ($viewerCssPath === null) {
+            return $this->fixPath($this->options['viewer_css_path']);
+        }
+        return $this->fixPath($viewerCssPath);
+    }
+
+
     public function renderEditorContentsCssPath(string $editorContentsCssPath = null): string
     {
         if ($editorContentsCssPath === null) {
@@ -116,9 +125,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $dependenciesJsHtml .= $this->renderScriptBlock($this->options['jquery_path']);
         }
         foreach ($dependencies as $dependency) {
-            if ($dependency['module_js_path'] !== null) {
-                $dependenciesJsHtml .= $this->renderScriptModuleBlock($dependency['module_js_path']);
-            }
             if ($dependency['js_path'] !== null) {
                 $dependenciesJsHtml .= $this->renderScriptBlock($dependency['js_path']);
             }
@@ -133,12 +139,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
     {
         return sprintf('<script src="%s"></script>', $this->fixPath($path));
     }
-
-    public function renderScriptModuleBlock(string $path): string
-    {
-        return sprintf('<script type="module" src="%s"></script>', $this->fixPath($path));
-    }
-
 
     public function renderStyleBlock(string $path): string
     {
@@ -188,20 +188,22 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $extensions = $this->options['configs'][$this->options['default_config']]['exts'];
 
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
-        $viewerCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
+        $editorContentsCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
+        $viewerCssCode = $this->renderStyleBlock($this->options['viewer_css_path']);
 
         $extsHtml = $this->renderExtensions($extensions);
 
         $viewerJsScript = sprintf(
-            '<script class="code-js">' .
-            'var content = [%s].join("\n"); ' .
-            'var viewer_%s = new tui.Editor({' .
-            'el: document.querySelector("#%s"),' .
-            'height: "%s",' .
-            'initialValue: content,' .
-            'exts: [%s]' .
-            '});' .
-            '</script>',
+            '<script class="code-js">
+                const { Editor } = toastui;
+                var content = [%s].join("\n");
+                var viewer_%s = new Editor({
+                    el: document.querySelector("#%s"),
+                    height: "%s",
+                    initialValue: content,
+                    plugins: [%s]
+                });
+            </script>',
             $this->fixContentToJs($content),
             $id,
             $id,
@@ -209,7 +211,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixArrayToJs($extensions)
         );
 
-        return $viewerJsCode . $viewerCssCode . $extsHtml . $viewerJsScript;
+        return $viewerJsCode . $viewerCssCode. $editorContentsCssCode . $extsHtml . $viewerJsScript;
     }
 
     private function fixArrayToJs(array $array, ?string $exclude = null): string
@@ -291,25 +293,25 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $config = $this->fixConfigLanguage($config);
         $extensions = $config['exts'];
 
-        $editorJsCode = sprintf('<script src="%s"></script>', $this->fixPath($this->options['editor_js_path']));
-        $editorCssCode = sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['editor_css_path']));
-        $editorContentsCssCode = sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($this->options['editor_contents_css_path']));
+        $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
+        $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
+        $editorContentsCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
 
         $extsHtml = $this->renderExtensions($extensions);
 
         $editorJsScript = sprintf(
-            '<script class="code-js">' .
-            'var content = [%s].join("\n");' .
-            'var %s = new tui.Editor({' .
-            'el: document.querySelector("#%s"),' .
-            'initialEditType: "%s",' .
-            'previewStyle: "%s",' .
-            'height: "%s",' .
-            'language: "%s",' .
-            'initialValue: content,' .
-            'exts: [%s]' .
-            '});' .
-            '</script>',
+            '<script class="code-js">
+                var content = [%s].join("\n");
+                const %s = new Editor({
+                    el: document.querySelector("#%s"),
+                    initialEditType: "%s",
+                    previewStyle: "%s",
+                    height: "%s",
+                    language: "%s",
+                    initialValue: content,
+                    plugins: [%s]
+                });
+            </script>',
             $this->fixContentToJs($content),
             $id,
             $id,
@@ -320,6 +322,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixArrayToJs($extensions)
         );
 
-        return $editorJsCode . $editorCssCode . $editorContentsCssCode . $extsHtml . $editorJsScript;
+        return $extsHtml . $editorJsCode . $editorCssCode . $editorContentsCssCode . $editorJsScript;
     }
 }

@@ -46,6 +46,7 @@ final class TuiEditorType extends AbstractType
         $builder->setAttribute('editor_js_path', $options['editor_js_path']);
         $builder->setAttribute('viewer_js_path', $options['viewer_js_path']);
         $builder->setAttribute('editor_css_path', $options['editor_css_path']);
+        $builder->setAttribute('viewer_css_path', $options['viewer_css_path']);
         $builder->setAttribute('editor_contents_css_path', $options['editor_contents_css_path']);
         $builder->setAttribute('jquery_path', $options['jquery_path']);
         $builder->setAttribute('config', $this->resolveConfig($options));
@@ -82,6 +83,7 @@ final class TuiEditorType extends AbstractType
         $view->vars['editor_js_path'] = $config->getAttribute('editor_js_path');
         $view->vars['viewer_js_path'] = $config->getAttribute('viewer_js_path');
         $view->vars['editor_css_path'] = $config->getAttribute('editor_css_path');
+        $view->vars['viewer_css_path'] = $config->getAttribute('viewer_css_path');
         $view->vars['editor_contents_css_path'] = $config->getAttribute('editor_contents_css_path');
         $view->vars['jquery_path'] = $config->getAttribute('jquery_path');
         $view->vars['config'] = $config->getAttribute('config');
@@ -102,6 +104,7 @@ final class TuiEditorType extends AbstractType
                 'editor_js_path' => $this->configuration->getEditorJsPath(),
                 'viewer_js_path' => $this->configuration->getViewerJsPath(),
                 'editor_css_path' => $this->configuration->getEditorCssPath(),
+                'viewer_css_path' => $this->configuration->getViewerCssPath(),
                 'editor_contents_css_path' => $this->configuration->getEditorContentsCssPath(),
                 'jquery_path' => $this->configuration->getJqueryPath(),
                 'config_name' => $this->configuration->getDefaultConfig(),
@@ -117,6 +120,7 @@ final class TuiEditorType extends AbstractType
             ->addAllowedTypes('editor_js_path', 'string')
             ->addAllowedTypes('viewer_js_path', 'string')
             ->addAllowedTypes('editor_css_path', 'string')
+            ->addAllowedTypes('viewer_css_path', 'string')
             ->addAllowedTypes('editor_contents_css_path', 'string')
             ->addAllowedTypes('jquery_path', 'string')
             ->addAllowedTypes('config', 'array')

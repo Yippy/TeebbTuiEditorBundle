@@ -30,6 +30,7 @@ final class TuiEditorExtension extends AbstractExtension implements TuiEditorRen
             new TwigFunction('tuieditor_viewer_widget', [$this, 'renderViewer'], $options),
             new TwigFunction('tuieditor_editor_widget', [$this, 'renderEditor'], $options),
             new TwigFunction('tuieditor_editor_css_path', [$this, 'renderEditorCssPath'], $options),
+            new TwigFunction('tuieditor_viewer_css_path', [$this, 'renderViewerCssPath'], $options),
             new TwigFunction('tuieditor_editor_contents_css_path', [$this, 'renderEditorContentsCssPath'], $options),
             new TwigFunction('tuieditor_dependencies', [$this, 'renderDependencies'], $options),
         ];
@@ -38,6 +39,11 @@ final class TuiEditorExtension extends AbstractExtension implements TuiEditorRen
     public function renderEditorCssPath(string $editorCssPath = null): string
     {
         return $this->renderer->renderEditorCssPath($editorCssPath);
+    }
+
+    public function renderViewerCssPath(string $viewerCssPath = null): string
+    {
+        return $this->renderer->renderViewerCssPath($viewerCssPath);
     }
 
     public function renderEditorContentsCssPath(string $editorContentsCssPath = null): string

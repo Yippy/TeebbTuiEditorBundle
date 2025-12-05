@@ -92,9 +92,9 @@ teebb_tui_editor:
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
             exts:                                           # exts must defined as array
                 - chart
-                - code-syntax-highlight
-                - color-syntax
-                - table-merged-cell
+                - codeSyntaxHighlight
+                - colorSyntax
+                - tableMergedCell
                 - uml
 
 ```
