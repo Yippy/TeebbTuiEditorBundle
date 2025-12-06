@@ -153,25 +153,24 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         if (null !== $extensions) {
             foreach ($extensions as $extKey => $extValue) {
                 switch ($extValue) {
-                    case 'editor_plugin_color_syntax':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_color_syntax']['tui_code_color_syntax_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_color_syntax']['tui_code_color_syntax_css_path']);
+                    case 'colorSyntax':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_css_path']);
                         break;
-                    case 'editor_plugin_chart':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_js_path']);
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_plugin_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_chart']['tui_chart_css_path']);
+                    case 'chart':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['chart']['tui_chart_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['chart']['tui_chart_css_path']);
                         break;
-                    case 'editor_plugin_code_syntax_highlight':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_code_syntax_highlight']['tui_code_syntax_highlight_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_code_syntax_highlight']['tui_code_syntax_highlight_css_path']);
+                    case 'codeSyntaxHighlight':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['codeSyntaxHighlight']['tui_code_syntax_highlight_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['codeSyntaxHighlight']['tui_code_syntax_highlight_css_path']);
                         break;
-                    case 'editor_plugin_table_merged_cell':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_table_merged_cell']['tui_table_merged_cell_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['editor_plugin_table_merged_cell']['tui_table_merged_cell_css_path']);
+                    case 'tableMergedCell':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['tableMergedCell']['tui_table_merged_cell_js_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['tableMergedCell']['tui_table_merged_cell_css_path']);
                         break;
-                    case 'editor_plugin_uml':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['editor_plugin_uml']['tui_uml_js_path']);
+                    case 'uml':
+                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['uml']['tui_uml_js_path']);
                         break;
                 }
             }
@@ -195,13 +194,11 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
         $viewerJsScript = sprintf(
             '<script class="code-js">
-                const { Editor } = toastui;
-                var content = [%s].join("\n");
-                var viewer_%s = new Editor({
+                var content = %s;
+                const viewer_%s = new Viewer({
                     el: document.querySelector("#%s"),
                     height: "%s",
                     initialValue: content,
-                    plugins: [%s]
                 });
             </script>',
             $this->fixContentToJs($content),
@@ -214,40 +211,26 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return $viewerJsCode . $viewerCssCode. $editorContentsCssCode . $extsHtml . $viewerJsScript;
     }
 
-    private function fixArrayToJs(array $array, ?string $exclude = null): string
+    private function fixArrayToJs(array $array, array $excludeList = []): string
     {
         if (null == $array) {
             return "";
         }
-        $jsArray = "";
+        $jsArray = [];
         foreach ($array as $key => $item) {
-            if ($item == $exclude) continue;
-            if ($key !== sizeof($array) - 1) {
-                $jsArray .= "'" . $item . "',";
-            } else {
-                $jsArray .= "'" . $item . "'";
-            }
+            if (in_array($item, $excludeList)) continue;
+            array_push($jsArray, $item);
         }
 
-        return $jsArray;
+        return implode(",", $jsArray);
     }
 
     private function fixContentToJs(string $content): string
     {
         if (null == $content) {
-            return "";
+            $content = "";
         }
-        $rows = explode("\r\n", $content);
-
-        $jsArray = "";
-        foreach ($rows as $index => $row) {
-            if ($index !== sizeof($rows) - 1) {
-                $jsArray .= "'" . $row . "',";
-            } else {
-                $jsArray .= "'" . $row . "'";
-            }
-        }
-        return $jsArray;
+        return json_encode($content);
     }
 
     private function fixPath(string $path): string
@@ -301,7 +284,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
         $editorJsScript = sprintf(
             '<script class="code-js">
-                var content = [%s].join("\n");
+                var content = %s;
                 const %s = new Editor({
                     el: document.querySelector("#%s"),
                     initialEditType: "%s",

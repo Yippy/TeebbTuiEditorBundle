@@ -83,6 +83,8 @@ teebb_tui_editor:
     #jquery: true                                           # Whether to enable jquery in dependencies.
     #jquery_path: ~                                         # Custom jquery path.
     #editor_js_path: ~                                      # Custom tui.editor js path.
+    #viewer_js_path: ~                                      # Custom tui.viewer js path.
+    #editor_contents_css_path: ~                            # Custom content css path.
     #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
     # ...                                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
     
@@ -121,21 +123,6 @@ Add the tui.editor dependencies in your page top. For example:
 
 ```twig
 {{ tuieditor_dependencies() }}
-```
-This will add the tui.editor dependencies JS and CSS libs like:
-
-```html
-
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/dompurify/dist/purify.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/orderedmap/dist/index.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-decoder.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/prismjs/prism.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/prosemirror-bundle.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/w3c-keyname/index.js"></script>
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.css">
-
 ```
 
 Second, use the `TuiEditorType` in your form field:

@@ -307,9 +307,7 @@ final class TuiEditorInstaller
         if (!@copy($from, $to)) {
             throw $this->createException(sprintf('Unable to extract the file "%s" to "%s".', $file, $to));
         }
-
     }
-
 
     private function notify(string $type, $data = null, callable $notifier = null)
     {

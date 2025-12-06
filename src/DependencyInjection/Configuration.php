@@ -77,7 +77,7 @@ final class Configuration implements ConfigurationInterface
                     ->arrayNode('uml')
                     ->addDefaultsIfNotSet()
                         ->children()
-                            ->scalarNode('tui_uml_js_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/toast-ui-viewer-bundle.js')->end()
+                            ->scalarNode('tui_uml_js_path')->defaultValue('https://uicdn.toast.com/editor-plugin-uml/latest/toastui-editor-plugin-uml.min.js')->end()
                         ->end()
                     ->end()
                 ->end();

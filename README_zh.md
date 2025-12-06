@@ -118,19 +118,7 @@ parameters:
 ```twig
 {{ tuieditor_dependencies() }}
 ```
-这一步会把tui.editor所有的依赖js库添加到页面, 最终的html代码如下：
 
-```html
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/dompurify/dist/purify.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/orderedmap/dist/index.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/plantuml-encoder/dist/plantuml-decoder.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/prismjs/prism.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/prosemirror-bundle.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.js"></script>
-<script src="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/w3c-keyname/index.js"></script>
-<link rel="stylesheet" href="/bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.min.css">
-```
 再在您的表单对应字段中使用TeebbTuiEditorBundle预先定义好的类型`TuiEditorType`, 如下:
 
 ```php
