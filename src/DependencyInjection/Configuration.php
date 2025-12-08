@@ -51,6 +51,7 @@ final class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('tui_code_color_syntax_js_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/toast-ui-color-syntax-bundle.js')->end()
                             ->scalarNode('tui_code_color_syntax_css_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/node_modules/@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css')->end()
+                            ->scalarNode('tui_code_color_picker_css_path')->defaultValue('bundles/teebbtuieditor/tui.editor-bundles/node_modules/tui-color-picker/dist/tui-color-picker.css')->end()
                         ->end()
                     ->end()
                     ->arrayNode('chart')

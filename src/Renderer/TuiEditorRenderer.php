@@ -156,6 +156,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                     case 'colorSyntax':
                         $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_js_path']);
                         $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_css_path']);
+                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_picker_css_path']);
                         break;
                     case 'chart':
                         $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['chart']['tui_chart_js_path']);
