@@ -110,7 +110,7 @@ final class TuiEditorInstaller
     private function clear(array $options): string
     {
 
-        if (!file_exists($options['path'].'/tui.editor-bundles/node_modules/@toast-ui/editor/dist/toastui-editor.js')) {
+        if (!file_exists($options['path'].'/tui.editor-bundles/toast-ui-editor-bundle.js')) {
             return self::CLEAR_DROP;
         }
 
@@ -123,36 +123,40 @@ final class TuiEditorInstaller
         }
 
         if (self::CLEAR_DROP === $options['clear']) {
-            $files = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($options['path'], \RecursiveDirectoryIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST
-            );
-
-            $this->notify(self::NOTIFY_CLEAR_SIZE, iterator_count($files), $options['notifier']);
-
-            foreach ($files as $file) {
-                $filePath = $file->getRealPath();
-                $this->notify(self::NOTIFY_CLEAR_PROGRESS, $filePath, $options['notifier']);
-
-                if ($dir = $file->isDir()) {
-                    $success = @rmdir($filePath);
-                } else {
-                    $success = @unlink($filePath);
-                }
-
-                if (!$success) {
-                    throw $this->createException(sprintf(
-                        'Unable to remove the %s "%s".',
-                        $dir ? 'directory' : 'file',
-                        $filePath
-                    ));
-                }
-            }
+            $this->removeDirectory($options['path'], $options['notifier']);
 
             $this->notify(self::NOTIFY_CLEAR_COMPLETE, null, $options['notifier']);
         }
 
         return $options['clear'];
+    }
+
+    private function removeDirectory($path, $notifier) {
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        $this->notify(self::NOTIFY_CLEAR_SIZE, iterator_count($files), $notifier);
+
+        foreach ($files as $file) {
+            $filePath = $file->getRealPath();
+            $this->notify(self::NOTIFY_CLEAR_PROGRESS, $filePath, $notifier);
+
+            if ($dir = $file->isDir()) {
+                $success = @rmdir($filePath);
+            } else {
+                $success = @unlink($filePath);
+            }
+
+            if (!$success) {
+                throw $this->createException(sprintf(
+                    'Unable to remove the %s "%s".',
+                    $dir ? 'directory' : 'file',
+                    $filePath
+                ));
+            }
+        }
     }
 
     private function download(array $options): string
@@ -279,8 +283,16 @@ final class TuiEditorInstaller
         $zip->close();
 
         $originExtractFolderName = $options['path'] . '/tui.editor-bundles-' . substr($this->version, 1);
+        $publicAssets = $options['path'] . '/tui.editor-bundles';
+        if (!is_dir($publicAssets) && !@mkdir($publicAssets, 0777, true)) {
+            throw $this->createException(sprintf('Unable to create the directory "%s".', $publicAssets));
+        }
 
-        rename($originExtractFolderName, $options['path'] . '/tui.editor-bundles');
+        $this->extractPublicFolder($originExtractFolderName.'/public', $publicAssets);
+        if (is_dir($originExtractFolderName)) {
+            $this->removeDirectory($originExtractFolderName, $options['notifier']);
+            rmdir($originExtractFolderName);
+        }
 
         $this->notify(self::NOTIFY_EXTRACT_COMPLETE, null, $options['notifier']);
 
@@ -288,6 +300,19 @@ final class TuiEditorInstaller
 
         if (!@unlink($path)) {
             throw $this->createException(sprintf('Unable to remove the tui.editor-bundles ZIP archive "%s".', $path));
+        }
+    }
+
+    public function extractPublicFolder($fromPath, $toPath): void
+    {
+        $files = scandir($fromPath);
+        $source = $fromPath."/";
+        $destination = $toPath."/";
+        foreach ($files as $file) {
+            if (in_array($file, array(".",".."))) continue;
+            if (!copy($source.$file, $destination.$file)) {
+                throw $this->createException(sprintf('Unable to copy the tui.editor-bundles public assets to /public folder "%s".', $source.$file));
+            }
         }
     }
 
@@ -326,6 +351,4 @@ final class TuiEditorInstaller
 
         return new \RuntimeException($message);
     }
-
-
 }
