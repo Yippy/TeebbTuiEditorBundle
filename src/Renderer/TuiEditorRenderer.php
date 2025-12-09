@@ -154,11 +154,14 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
     {
         $extsJsHtml = "";
         $extsCssHtml = "";
-
         if (null !== $extensions) {
-            foreach ($extensions as $extKey => $extValue) {
-                if (in_array($extKey, $excludeList)) continue;
-                switch ($extValue) {
+            foreach ($extensions as $key => $extensionName) {
+                if (is_array($extensionName)) {
+                    $extensionName = array_key_first($extensionName);
+                    if (in_array($extensionName, $excludeList)) continue;
+                }
+                if (in_array($extensionName, $excludeList)) continue;
+                switch ($extensionName) {
                     case 'colorSyntax':
                         $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_js_path']);
                         $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_css_path']);
@@ -230,9 +233,15 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             return "";
         }
         $jsArray = [];
-        foreach ($array as $key => $item) {
-            if (in_array($item, $excludeList)) continue;
-            array_push($jsArray, $item);
+        foreach ($array as $item) {
+            if (is_array($item)) {
+                $key = array_key_first($item);
+                if (in_array($key, $excludeList)) continue;
+                array_push($jsArray, '['.$key.','.json_encode($item[$key]).']');
+            } else {
+                if (in_array($item, $excludeList)) continue;
+                array_push($jsArray, $item);
+            }
         }
 
         return implode(",", $jsArray);
