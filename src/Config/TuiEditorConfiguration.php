@@ -50,6 +50,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     /**
      * @var string
      */
+    private $editorThemeName;
+
+    /**
+     * @var string
+     */
     private $jqueryPath;
 
     /**
@@ -96,6 +101,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         $this->editorCssPath = $config['editor_css_path'];
         $this->viewerCssPath = $config['viewer_css_path'];
         $this->editorContentsCssPath = $config['editor_contents_css_path'];
+        $this->editorThemeName = $config['editor_theme_name'];
         $this->jqueryPath = $config['jquery_path'];
         $this->defaultConfig = $config['default_config'];
         $this->configs = $config['configs'];
@@ -169,6 +175,10 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->editorContentsCssPath;
     }
 
+    public function getEditorThemeName(): string
+    {
+        return $this->editorThemeName;
+    }
 
     public function getJqueryPath(): string
     {

@@ -30,12 +30,13 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('editor_css_path')->defaultValue($bundleBasePath.'css/toastui-editor.css')->end()
                 ->scalarNode('viewer_css_path')->defaultValue($bundleBasePath.'css/toastui-editor-viewer.css')->end()
                 ->scalarNode('editor_contents_css_path')->defaultValue(null)->end()
+                ->scalarNode('editor_theme_name')->defaultValue('light')->end()
                 ->scalarNode('jquery_path')->defaultValue($bundleBasePath.'js/jquery.min.js')->end()
                 ->scalarNode('default_config')->defaultValue(null)->end()
                 ->scalarNode('asset_repository')->defaultValue('teebbstudios/tui.editor-bundles')->end()
                 ->append($this->createToolbarItems())
                 ->append($this->createExtensions($bundleBasePath))
-                ->append($this->createDependencies())
+                ->append($this->createDependencies($bundleBasePath))
                 ->append($this->createConfigsNode())
             ->end();
 
@@ -93,12 +94,18 @@ final class Configuration implements ConfigurationInterface
                 ->end();
     }
 
-    private function createDependencies()
+    private function createDependencies($bundleBasePath)
     {
         return $this->createNode('dependencies')
             ->addDefaultsIfNotSet()
                 ->children()
-
+                    ->arrayNode('editor_dark_theme')
+                    ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('js_path')->defaultValue(null)->end()
+                            ->scalarNode('css_path')->defaultValue($bundleBasePath.'css/toastui-editor-dark.css')->end()
+                        ->end()
+                    ->end()
                 ->end();
     }
 

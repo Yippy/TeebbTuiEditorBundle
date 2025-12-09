@@ -94,7 +94,7 @@ teebb_tui_editor:
             #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
             #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
-            #theme_css: 'dark'                               # override editor color scheme with dark theme
+            #editor_theme_name: 'dark'                      # override editor color scheme with dark theme, default is 'light'
             exts:                                           # exts must defined as array
                 - chart
                 - codeSyntaxHighlight
@@ -102,6 +102,10 @@ teebb_tui_editor:
                 - tableMergedCell
                 - uml
             toolbar_items: []
+            dependencies:
+                editor_dark_theme:                          # Must include if using 'dark' theme
+                    js_path:
+                    css_path: /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-dark.css
 
 ```
 

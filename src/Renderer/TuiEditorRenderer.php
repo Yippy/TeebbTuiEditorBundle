@@ -115,7 +115,12 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
     public function renderDependencies(array $dependencies = null): string
     {
         if ($dependencies === null) {
-            $dependencies = $this->options['dependencies'];
+            if ($this->options['default_config']) {
+                $dependencies = $this->options['configs'][$this->options['default_config']]['dependencies'];
+            }
+            if ($dependencies === null) {
+                $dependencies = $this->options['dependencies'];
+            }
         }
 
         $dependenciesJsHtml = "";
@@ -145,13 +150,14 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($path));
     }
 
-    public function renderExtensions($extensions): string
+    public function renderExtensions($extensions, array $excludeList = []): string
     {
         $extsJsHtml = "";
         $extsCssHtml = "";
 
         if (null !== $extensions) {
             foreach ($extensions as $extKey => $extValue) {
+                if (in_array($extKey, $excludeList)) continue;
                 switch ($extValue) {
                     case 'colorSyntax':
                         $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_js_path']);
@@ -185,13 +191,22 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         if (null === $viewerJsPath) {
             $viewerJsPath = $this->options['viewer_js_path'];
         }
+
         $extensions = $this->options['configs'][$this->options['default_config']]['exts'];
+        
+        $editorThemeName = null;
+        if ($this->options['default_config']) {
+            $editorThemeName = $this->options['configs'][$this->options['default_config']]['editor_theme_name'];
+        }
+        if ($editorThemeName === null) {
+            $editorThemeName = $this->options['editor_theme_name'];
+        }
 
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
         $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
         $viewerCssCode = $this->renderStyleBlock($this->options['viewer_css_path']);
 
-        $extsHtml = $this->renderExtensions($extensions);
+        $extsHtml = $this->renderExtensions($extensions, ["uml", "colorSyntax"]);
 
         $viewerJsScript = sprintf(
             '<script class="code-js">
@@ -200,13 +215,16 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                     el: document.querySelector("#%s"),
                     height: "%s",
                     initialValue: content,
+                    plugins: [%s],
+                    theme: "%s"
                 });
             </script>',
             $this->fixContentToJs($content),
             $id,
             $id,
             "300px",
-            $this->fixArrayToJs($extensions)
+            $this->fixArrayToJs($extensions, ["uml", "colorSyntax"]),
+            $editorThemeName
         );
 
         return $viewerJsCode . $viewerCssCode. $editorContentsCssCode . $extsHtml . $viewerJsScript;
@@ -274,8 +292,10 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
     public function renderEditor(string $id, array $config, string $content = null): string
     {
+        return $this->renderViewer($id, $content);
         $config = $this->fixConfigLanguage($config);
         $extensions = $config['exts'];
+        $editorThemeName = $config['editor_theme_name'];
 
         $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
         $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
@@ -293,7 +313,8 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                     height: "%s",
                     language: "%s",
                     initialValue: content,
-                    plugins: [%s]
+                    plugins: [%s],
+                    theme: "%s"
                 });
             </script>',
             $this->fixContentToJs($content),
@@ -303,7 +324,8 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             array_key_exists('previewStyle', $config) ? $config['previewStyle'] : "vertical",
             array_key_exists('height', $config) ? $config['height'] : "300px",
             array_key_exists('language', $config) ? $config['language'] : $config['locale'],
-            $this->fixArrayToJs($extensions)
+            $this->fixArrayToJs($extensions),
+            $editorThemeName
         );
 
         return $extsHtml . $editorJsCode . $editorCssCode . $editorContentsCssCode . $editorJsScript;
