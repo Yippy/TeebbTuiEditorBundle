@@ -22,7 +22,7 @@ interface TuiEditorConfigurationInterface
 
     public function getEditorCssPath(): string;
 
-    public function getEditorContentsCssPath(): string;
+    public function getEditorContentsCssPath(): ?string;
 
     public function getJqueryPath(): string;
 

@@ -121,7 +121,7 @@ final class TuiEditorType extends AbstractType
             ->addAllowedTypes('viewer_js_path', 'string')
             ->addAllowedTypes('editor_css_path', 'string')
             ->addAllowedTypes('viewer_css_path', 'string')
-            ->addAllowedTypes('editor_contents_css_path', 'string')
+            ->addAllowedTypes('editor_contents_css_path',  ['string', 'null'])
             ->addAllowedTypes('jquery_path', 'string')
             ->addAllowedTypes('config', 'array')
             ->addAllowedTypes('extensions', 'array')

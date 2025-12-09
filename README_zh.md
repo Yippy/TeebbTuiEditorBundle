@@ -79,6 +79,10 @@ teebb_tui_editor:
     #jquery: true                                           # 是否使用jquery, 如果您的项目中使用过jquery,可以设置为false,避免重复引入jquery
     #jquery_path: ~                                         # 自定义jquery路径.
     #editor_js_path: ~                                      # 自定义editor js 路径
+    #viewer_js_path: ~                                      # Custom tui.viewer js path.
+    #editor_css_path: ~                                     # Custom tui.editor css path.
+    #viewer_css_path: ~                                     # Custom tui.viewer css path.
+    #editor_contents_css_path: ~                            # Custom content css path.
     #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
     # ...                                                   # 更多配置使用命令: bin/console debug:config teebb_tui_editor 查看
     
@@ -90,12 +94,14 @@ teebb_tui_editor:
             #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
             #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
+            #theme_css: 'dark'                               # override editor color scheme with dark theme
             exts:                                           # exts must defined as array
                 - chart
                 - codeSyntaxHighlight
                 - colorSyntax
                 - tableMergedCell
                 - uml
+            toolbar_items: []
 
 ```
 

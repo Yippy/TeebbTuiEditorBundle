@@ -188,7 +188,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $extensions = $this->options['configs'][$this->options['default_config']]['exts'];
 
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
-        $editorContentsCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
+        $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
         $viewerCssCode = $this->renderStyleBlock($this->options['viewer_css_path']);
 
         $extsHtml = $this->renderExtensions($extensions);
@@ -279,7 +279,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
         $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
         $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
-        $editorContentsCssCode = $this->renderStyleBlock($this->options['editor_contents_css_path']);
+        $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
 
         $extsHtml = $this->renderExtensions($extensions);
 

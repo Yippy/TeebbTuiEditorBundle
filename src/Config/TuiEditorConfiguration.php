@@ -43,7 +43,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     private $editorCssPath;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $editorContentsCssPath;
 
@@ -61,6 +61,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
      * @var array
      */
     private $configs;
+
+    /**
+     * @var array
+     */
+    private $toolbarItems;
 
     /**
      * @var array
@@ -94,6 +99,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         $this->jqueryPath = $config['jquery_path'];
         $this->defaultConfig = $config['default_config'];
         $this->configs = $config['configs'];
+        $this->toolbarItems = $config['toolbar_items'];
         $this->extensions = $config['extensions'];
         $this->dependencies = $config['dependencies'];
         $this->assetRepository = $config['asset_repository'];
@@ -158,7 +164,7 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->viewerCssPath;
     }
 
-    public function getEditorContentsCssPath(): string
+    public function getEditorContentsCssPath(): ?string
     {
         return $this->editorContentsCssPath;
     }
@@ -177,6 +183,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     public function getConfigs(): array
     {
         return $this->configs;
+    }
+
+    public function getToolbarItems(): array
+    {
+        return $this->toolbarItems;
     }
 
     public function getExtensions(): array

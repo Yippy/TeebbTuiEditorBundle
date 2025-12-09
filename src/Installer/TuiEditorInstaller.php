@@ -110,7 +110,7 @@ final class TuiEditorInstaller
     private function clear(array $options): string
     {
 
-        if (!file_exists($options['path'].'/tui.editor-bundles/toast-ui-editor-bundle.js')) {
+        if (!file_exists($options['path'].'/tui.editor-bundles/js/toast-ui-editor-bundle.js')) {
             return self::CLEAR_DROP;
         }
 
@@ -293,7 +293,6 @@ final class TuiEditorInstaller
             $this->removeDirectory($originExtractFolderName, $options['notifier']);
             rmdir($originExtractFolderName);
         }
-
         $this->notify(self::NOTIFY_EXTRACT_COMPLETE, null, $options['notifier']);
 
         $this->notify(self::NOTIFY_CLEAR_ARCHIVE, $path, $options['notifier']);
@@ -303,15 +302,22 @@ final class TuiEditorInstaller
         }
     }
 
-    public function extractPublicFolder($fromPath, $toPath): void
+    public function extractPublicFolder($fromPath, $toPath)
     {
         $files = scandir($fromPath);
         $source = $fromPath."/";
         $destination = $toPath."/";
         foreach ($files as $file) {
             if (in_array($file, array(".",".."))) continue;
-            if (!copy($source.$file, $destination.$file)) {
-                throw $this->createException(sprintf('Unable to copy the tui.editor-bundles public assets to /public folder "%s".', $source.$file));
+            if (is_dir($source.$file)) {
+                if (!is_dir($destination.$file) && !@mkdir($destination.$file, 0777, true)) {
+                    throw $this->createException(sprintf('Unable to create the directory "%s".', $destination.$file));
+                }
+                $this->extractPublicFolder($source.$file, $destination.$file);
+            } else {
+                if (copy($source.$file, $destination.$file)) {
+                    // copied successfully
+                }
             }
         }
     }

@@ -84,6 +84,8 @@ teebb_tui_editor:
     #jquery_path: ~                                         # Custom jquery path.
     #editor_js_path: ~                                      # Custom tui.editor js path.
     #viewer_js_path: ~                                      # Custom tui.viewer js path.
+    #editor_css_path: ~                                     # Custom tui.editor css path.
+    #viewer_css_path: ~                                     # Custom tui.viewer css path.
     #editor_contents_css_path: ~                            # Custom content css path.
     #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
     # ...                                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
@@ -96,12 +98,14 @@ teebb_tui_editor:
             #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
             #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
+            #theme_css: 'dark'                               # override editor color scheme with dark theme
             exts:                                           # exts must defined as array
                 - chart
                 - codeSyntaxHighlight
                 - colorSyntax
                 - tableMergedCell
                 - uml
+            toolbar_items: []
 
 ```
 
