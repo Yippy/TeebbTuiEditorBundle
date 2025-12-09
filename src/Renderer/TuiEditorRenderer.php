@@ -187,20 +187,14 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
     public function renderViewer(string $id, string $content, string $viewerJsPath = null): string
     {
-
         if (null === $viewerJsPath) {
             $viewerJsPath = $this->options['viewer_js_path'];
         }
 
-        $extensions = $this->options['configs'][$this->options['default_config']]['exts'];
+        $defaultConfig = $this->options['default_config'];
+        $extensions = $defaultConfig && array_key_exists('editor_theme_name', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['extensions']: $this->options['extensions'];
         
-        $editorThemeName = null;
-        if ($this->options['default_config']) {
-            $editorThemeName = $this->options['configs'][$this->options['default_config']]['editor_theme_name'];
-        }
-        if ($editorThemeName === null) {
-            $editorThemeName = $this->options['editor_theme_name'];
-        }
+        $editorThemeName = $defaultConfig && array_key_exists('editor_theme_name', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['editor_theme_name']: $this->options['editor_theme_name'];
 
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
         $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
@@ -292,10 +286,9 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
     public function renderEditor(string $id, array $config, string $content = null): string
     {
-        return $this->renderViewer($id, $content);
         $config = $this->fixConfigLanguage($config);
-        $extensions = $config['exts'];
-        $editorThemeName = $config['editor_theme_name'];
+        $extensions = array_key_exists('extensions', $config) ? $config['extensions']: $this->options['extensions'];
+        $editorThemeName = array_key_exists('editor_theme_name', $config) ? $config['editor_theme_name']: $this->options['editor_theme_name'];
 
         $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
         $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);

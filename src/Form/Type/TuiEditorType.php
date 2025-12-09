@@ -85,6 +85,7 @@ final class TuiEditorType extends AbstractType
         $view->vars['editor_css_path'] = $config->getAttribute('editor_css_path');
         $view->vars['viewer_css_path'] = $config->getAttribute('viewer_css_path');
         $view->vars['editor_contents_css_path'] = $config->getAttribute('editor_contents_css_path');
+        $view->vars['editor_theme_name'] = $config->getAttribute('editor_theme_name');
         $view->vars['jquery_path'] = $config->getAttribute('jquery_path');
         $view->vars['config'] = $config->getAttribute('config');
         $view->vars['extensions'] = $config->getAttribute('extensions');
@@ -106,6 +107,7 @@ final class TuiEditorType extends AbstractType
                 'editor_css_path' => $this->configuration->getEditorCssPath(),
                 'viewer_css_path' => $this->configuration->getViewerCssPath(),
                 'editor_contents_css_path' => $this->configuration->getEditorContentsCssPath(),
+                'editor_theme_name' => $this->configuration->getEditorThemeName(),
                 'jquery_path' => $this->configuration->getJqueryPath(),
                 'config_name' => $this->configuration->getDefaultConfig(),
                 'config' => $this->configuration->getConfigs(),
@@ -122,6 +124,7 @@ final class TuiEditorType extends AbstractType
             ->addAllowedTypes('editor_css_path', 'string')
             ->addAllowedTypes('viewer_css_path', 'string')
             ->addAllowedTypes('editor_contents_css_path',  ['string', 'null'])
+            ->addAllowedTypes('editor_theme_name',  'string')
             ->addAllowedTypes('jquery_path', 'string')
             ->addAllowedTypes('config', 'array')
             ->addAllowedTypes('extensions', 'array')
