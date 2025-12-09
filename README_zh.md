@@ -96,7 +96,8 @@ teebb_tui_editor:
             #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
             #editor_theme_name: 'dark'                      # override editor color scheme with dark theme, default is 'light'
             extensions:                                     # extensions must defined as array of plugin_name variable or {plugin_name, {plugin_options}}
-                - chart:                                    # chart options
+                - chart                                     # chart default
+                #- chart:                                   # chart custom options
                     #width: 'auto'                          # number|string	'auto'	Default width value
                     #height: 'auto'                         # number|string	'auto'	Default height value
                     #minWidth: 0                            # number	0	Minimum width value
@@ -104,11 +105,13 @@ teebb_tui_editor:
                     #minHeight: Infinity                    # number    Infinity	Maximum width value
                     #maxHeight: Infinity                    # number	Infinity	Maximum height value
                 - codeSyntaxHighlight
-                - colorSyntax:                              # colorSyntax options
-                    #preset: ['#181818', '#292929']     # preset	Array.<string>		Preset for color palette
+                - colorSyntax                               # colorSyntax default
+                #- colorSyntax:                             # colorSyntax custom options
+                    #preset: ['#181818', '#292929']     # [required] preset	Array.<string>		Preset for color palette
                 - tableMergedCell
-                - uml:                                      # uml options
-                    #rendererURL: ~                         # string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
+                - uml                                       # uml default
+                #- uml:                                     # uml custom options
+                    #rendererURL: ~                         # [required]string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
             toolbar_items: []
             dependencies:
                 editor_dark_theme:                          # Must include if using 'dark' theme
