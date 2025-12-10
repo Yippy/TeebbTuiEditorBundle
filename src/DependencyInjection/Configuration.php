@@ -30,11 +30,11 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('editor_css_path')->defaultValue($bundleBasePath.'css/toastui-editor.css')->end()
                 ->scalarNode('viewer_css_path')->defaultValue($bundleBasePath.'css/toastui-editor-viewer.css')->end()
                 ->scalarNode('editor_contents_css_path')->defaultValue(null)->end()
-                ->scalarNode('editor_theme_name')->defaultValue('light')->end()
                 ->scalarNode('jquery_path')->defaultValue($bundleBasePath.'js/jquery.min.js')->end()
                 ->scalarNode('default_config')->defaultValue(null)->end()
                 ->scalarNode('asset_repository')->defaultValue('teebbstudios/tui.editor-bundles')->end()
-                ->append($this->createToolbarItems())
+                ->append($this->createEditorOptions())
+                ->append($this->createViewerOptions())
                 ->append($this->createExtensions($bundleBasePath))
                 ->append($this->createDependencies($bundleBasePath))
                 ->append($this->createConfigsNode())
@@ -43,14 +43,31 @@ final class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function createToolbarItems()
+    private function createEditorOptions()
     {
-        return $this->createNode("toolbar_items")
+        return $this->createNode('editor_options')
             ->addDefaultsIfNotSet()
                 ->children()
-
-                ->end();
+                    ->arrayNode('toolbar_items')
+                        ->prototype('scalar')->end()
+                        ->defaultValue([['heading', 'bold', 'italic', 'strike'],['hr', 'quote'],['ul', 'ol', 'task', 'indent', 'outdent'],['table', 'image', 'link'],['code', 'codeblock']])
+                    ->end()
+                    ->scalarNode('theme')->defaultValue('light')->end()
+                    ->scalarNode('initial_edit_type')->defaultValue('markdown')->end()
+                    ->scalarNode('preview_style')->defaultValue('vertical')->end()
+                    ->scalarNode('height')->defaultValue('auto')->end()
+            ->end();
     }
+
+    private function createViewerOptions()
+    {
+        return $this->createNode('viewer_options')
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('height')->defaultValue('auto')->end()
+            ->end();
+    }
+
     private function createExtensions(string $bundleBasePath)
     {
         return $this->createNode('extensions')

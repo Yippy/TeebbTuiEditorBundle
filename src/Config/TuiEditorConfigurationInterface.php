@@ -24,8 +24,6 @@ interface TuiEditorConfigurationInterface
 
     public function getEditorContentsCssPath(): ?string;
 
-    public function getEditorThemeName(): string;
-
     public function getJqueryPath(): string;
 
     public function getDefaultConfig(): ?string;
@@ -35,6 +33,10 @@ interface TuiEditorConfigurationInterface
     public function getExtensions(): array;
 
     public function getDependencies(): array;
+
+    public function getEditorOptions(): array;
+
+    public function getViewerOptions(): array;
 
     public function getAssetRepository(): string;
 

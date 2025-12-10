@@ -50,11 +50,6 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     /**
      * @var string
      */
-    private $editorThemeName;
-
-    /**
-     * @var string
-     */
     private $jqueryPath;
 
     /**
@@ -70,7 +65,12 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     /**
      * @var array
      */
-    private $toolbarItems;
+    private $editorOptions;
+
+    /**
+     * @var array
+     */
+    private $viewerOptions;
 
     /**
      * @var array
@@ -101,11 +101,11 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         $this->editorCssPath = $config['editor_css_path'];
         $this->viewerCssPath = $config['viewer_css_path'];
         $this->editorContentsCssPath = $config['editor_contents_css_path'];
-        $this->editorThemeName = $config['editor_theme_name'];
         $this->jqueryPath = $config['jquery_path'];
         $this->defaultConfig = $config['default_config'];
         $this->configs = $config['configs'];
-        $this->toolbarItems = $config['toolbar_items'];
+        $this->editorOptions = $config['editor_options'];
+        $this->viewerOptions = $config['viewer_options'];
         $this->extensions = $config['extensions'];
         $this->dependencies = $config['dependencies'];
         $this->assetRepository = $config['asset_repository'];
@@ -175,11 +175,6 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->editorContentsCssPath;
     }
 
-    public function getEditorThemeName(): string
-    {
-        return $this->editorThemeName;
-    }
-
     public function getJqueryPath(): string
     {
         return $this->jqueryPath;
@@ -195,9 +190,14 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->configs;
     }
 
-    public function getToolbarItems(): array
+    public function getEditorOptions(): array
     {
-        return $this->toolbarItems;
+        return $this->editorOptions;
+    }
+
+    public function getViewerOptions(): array
+    {
+        return $this->viewerOptions;
     }
 
     public function getExtensions(): array

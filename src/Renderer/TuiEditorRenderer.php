@@ -195,9 +195,8 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         }
 
         $defaultConfig = $this->options['default_config'];
-        $extensions = $defaultConfig && array_key_exists('editor_theme_name', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['extensions']: $this->options['extensions'];
-        
-        $editorThemeName = $defaultConfig && array_key_exists('editor_theme_name', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['editor_theme_name']: $this->options['editor_theme_name'];
+        $extensions = $defaultConfig && array_key_exists('extensions', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['extensions']: $this->options['extensions'];
+        $viewerOptions = $defaultConfig && array_key_exists('viewer_options', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['viewer_options']: $this->options['viewer_options'];
 
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
         $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
@@ -210,18 +209,16 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                 var content = %s;
                 const viewer_%s = new Viewer({
                     el: document.querySelector("#%s"),
-                    height: "%s",
+                    height: %s,
                     initialValue: content,
-                    plugins: [%s],
-                    theme: "%s"
+                    plugins: [%s]
                 });
             </script>',
             $this->fixContentToJs($content),
             $id,
             $id,
-            "300px",
-            $this->fixArrayToJs($extensions, ["uml", "colorSyntax"]),
-            $editorThemeName
+            json_encode($viewerOptions['height']),
+            $this->fixArrayToJs($extensions, ["uml", "colorSyntax"])
         );
 
         return $viewerJsCode . $viewerCssCode. $editorContentsCssCode . $extsHtml . $viewerJsScript;
@@ -296,8 +293,9 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
     public function renderEditor(string $id, array $config, string $content = null): string
     {
         $config = $this->fixConfigLanguage($config);
+
         $extensions = array_key_exists('extensions', $config) ? $config['extensions']: $this->options['extensions'];
-        $editorThemeName = array_key_exists('editor_theme_name', $config) ? $config['editor_theme_name']: $this->options['editor_theme_name'];
+        $editorOptions = array_key_exists('editor_options', $config) ? $config['editor_options']: $this->options['editor_options'];
 
         $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
         $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
@@ -310,24 +308,26 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                 var content = %s;
                 const %s = new Editor({
                     el: document.querySelector("#%s"),
-                    initialEditType: "%s",
-                    previewStyle: "%s",
-                    height: "%s",
-                    language: "%s",
+                    initialEditType: %s,
+                    previewStyle: %s,
+                    height: %s,
+                    language: %s,
                     initialValue: content,
                     plugins: [%s],
-                    theme: "%s"
+                    theme: %s,
+                    toolbarItems: %s
                 });
             </script>',
             $this->fixContentToJs($content),
             $id,
             $id,
-            array_key_exists('initialEditType', $config) ? $config['initialEditType'] : "markdown",
-            array_key_exists('previewStyle', $config) ? $config['previewStyle'] : "vertical",
-            array_key_exists('height', $config) ? $config['height'] : "300px",
+            json_encode($editorOptions['initial_edit_type']),
+            json_encode($editorOptions['preview_style']),
+            json_encode($editorOptions['height']),
             array_key_exists('language', $config) ? $config['language'] : $config['locale'],
             $this->fixArrayToJs($extensions),
-            $editorThemeName
+            json_encode($editorOptions['theme']),
+            json_encode($editorOptions['toolbar_items'])
         );
 
         return $extsHtml . $editorJsCode . $editorCssCode . $editorContentsCssCode . $editorJsScript;

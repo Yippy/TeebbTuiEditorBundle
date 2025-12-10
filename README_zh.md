@@ -87,14 +87,26 @@ teebb_tui_editor:
     # ...                                                   # 更多配置使用命令: bin/console debug:config teebb_tui_editor 查看
     
     default_config: basic_config
+    #editor_options:
+        #height: 'auto'                                     # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+        #initial_edit_type: 'wysiwyg'                       # Initial editor type (markdown, wysiwyg)
+        #preview_style: 'vertical'                          # Markdown editor's preview style (tab, vertical)
+        #theme: 'dark'                                      # override editor color scheme with dark theme
+        #toolbar_items:
+            #- ["heading"]
+    #viewer_options:
+        #height: 'auto'                                     # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
 
     configs:
         basic_config:
             to_html: false                                  # Save to database use html syntax?
-            #previewStyle: 'vertical'                       # Markdown editor's preview style (tab, vertical)
-            #height: '400px'                                # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-            #initialEditType: 'markdown'                    # Initial editor type (markdown, wysiwyg)
-            #editor_theme_name: 'dark'                      # override editor color scheme with dark theme, default is 'light'
+            editor_options:
+                #height: 'auto'                             # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+                #initial_edit_type: 'wysiwyg'               # Initial editor type (markdown, wysiwyg)
+                #preview_style: 'vertical'                  # Markdown editor's preview style (tab, vertical)
+                #theme: 'dark'                              # override editor color scheme with dark theme
+                #toolbar_items:
+                    #- ["heading"]
             extensions:                                     # extensions must defined as array of plugin_name variable or {plugin_name, {plugin_options}}
                 - chart                                     # chart default
                 #- chart:                                   # chart custom options
@@ -112,7 +124,6 @@ teebb_tui_editor:
                 - uml                                       # uml default
                 #- uml:                                     # uml custom options
                     #rendererURL: ~                         # [required]string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
-            toolbar_items: []
             dependencies:
                 editor_dark_theme:                          # Must include if using 'dark' theme
                     js_path:
