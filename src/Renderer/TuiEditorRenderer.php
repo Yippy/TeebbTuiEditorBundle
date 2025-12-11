@@ -114,14 +114,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
 
     public function renderDependencies(array $dependencies = null): string
     {
-        if ($dependencies === null) {
-            if ($this->options['default_config']) {
-                $dependencies = $this->options['configs'][$this->options['default_config']]['dependencies'];
-            }
-            if ($dependencies === null) {
-                $dependencies = $this->options['dependencies'];
-            }
-        }
+        $dependencies = $this->getOption(null, 'dependencies', $dependencies, $this->options, true);
 
         $dependenciesJsHtml = "";
         $dependenciesCssHtml = "";
@@ -129,12 +122,20 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         if ($this->options['jquery']) {
             $dependenciesJsHtml .= $this->renderScriptBlock($this->options['jquery_path']);
         }
-        foreach ($dependencies as $dependency) {
-            if ($dependency['js_path'] !== null) {
-                $dependenciesJsHtml .= $this->renderScriptBlock($dependency['js_path']);
+        foreach ($dependencies as $dependencyName => $dependencyConfigs) {
+            if (is_array($dependencyConfigs) && array_key_exists('js_paths',$dependencyConfigs)) {
+                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyConfigs['js_paths']);
+            } else {
+                // Find default
+                $dependencyFindDefault = $this->getOptionForParent('js_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
+                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyFindDefault);
             }
-            if ($dependency['css_path'] !== null) {
-                $dependenciesCssHtml .= $this->renderStyleBlock($dependency['css_path']);
+            if (is_array($dependencyConfigs) && array_key_exists('css_paths',$dependencyConfigs)) {
+                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyConfigs['css_paths']);
+            } else {
+                // Find default
+                $dependencyFindDefault = $this->getOptionForParent('css_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
+                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyFindDefault);
             }
         }
         return $dependenciesJsHtml . $dependenciesCssHtml;
@@ -150,38 +151,51 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return sprintf('<link rel="stylesheet" href="%s" />', $this->fixPath($path));
     }
 
+    private function retrieveJsPathToHtml(?array $paths) {
+        $html = '';
+        if ($paths && is_array($paths)) {
+            foreach ($paths as $path) {
+                if ($path) {
+                    $html .= $this->renderScriptBlock($path);
+                }
+            }
+        }
+        return $html;
+    }
+
+    private function retrieveCssPathToHtml(?array $paths) {
+        $html = '';
+        if ($paths && is_array($paths)) {
+            foreach ($paths as $path) {
+                if ($path) {
+                    $html .= $this->renderStyleBlock($path);
+                }
+            }
+        }
+        return $html;
+    }
+
     public function renderExtensions($extensions, array $excludeList = []): string
     {
         $extsJsHtml = "";
         $extsCssHtml = "";
         if (null !== $extensions) {
-            foreach ($extensions as $key => $extensionName) {
-                if (is_array($extensionName)) {
-                    $extensionName = array_key_first($extensionName);
-                    if (in_array($extensionName, $excludeList)) continue;
-                }
+            foreach ($extensions as $extensionName => $extensionConfigs) {
                 if (in_array($extensionName, $excludeList)) continue;
-                switch ($extensionName) {
-                    case 'colorSyntax':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_syntax_css_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['colorSyntax']['tui_code_color_picker_css_path']);
-                        break;
-                    case 'chart':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['chart']['tui_chart_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['chart']['tui_chart_css_path']);
-                        break;
-                    case 'codeSyntaxHighlight':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['codeSyntaxHighlight']['tui_code_syntax_highlight_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['codeSyntaxHighlight']['tui_code_syntax_highlight_css_path']);
-                        break;
-                    case 'tableMergedCell':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['tableMergedCell']['tui_table_merged_cell_js_path']);
-                        $extsCssHtml .= $this->renderStyleBlock($this->options['extensions']['tableMergedCell']['tui_table_merged_cell_css_path']);
-                        break;
-                    case 'uml':
-                        $extsJsHtml .= $this->renderScriptBlock($this->options['extensions']['uml']['tui_uml_js_path']);
-                        break;
+
+                if (is_array($extensionConfigs) && array_key_exists('js_paths',$extensionConfigs)) {
+                    $extsJsHtml .= $this->retrieveJsPathToHtml($extensionConfigs['js_paths']);
+                } else {
+                    // Find default
+                    $extensionFindDefault = $this->getOptionForParent('js_paths', $extensionName, 'extensions', $extensionConfigs, $this->options, true);
+                    $extsJsHtml .= $this->retrieveJsPathToHtml($extensionFindDefault);
+                }
+                if (is_array($extensionConfigs) && array_key_exists('css_paths',$extensionConfigs)) {
+                    $extsCssHtml .= $this->retrieveCssPathToHtml($extensionConfigs['css_paths']);
+                } else {
+                    // Find default
+                    $extensionFindDefault = $this->getOptionForParent('css_paths', $extensionName, 'extensions', $extensionConfigs, $this->options, true);
+                    $extsCssHtml .= $this->retrieveCssPathToHtml($extensionFindDefault);
                 }
             }
         }
@@ -195,9 +209,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         }
 
         $defaultConfig = $this->options['default_config'];
-        $extensions = $defaultConfig && array_key_exists('extensions', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['extensions']: $this->options['extensions'];
-        $viewerOptions = $defaultConfig && array_key_exists('viewer_options', $this->options['configs'][$defaultConfig]) ? $this->options['configs'][$defaultConfig]['viewer_options']: $this->options['viewer_options'];
-
+        $extensions = $this->getOption(null, 'extensions', null, $this->options, true);
         $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
         $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
         $viewerCssCode = $this->renderStyleBlock($this->options['viewer_css_path']);
@@ -217,7 +229,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixContentToJs($content),
             $id,
             $id,
-            json_encode($viewerOptions['height']),
+            $this->getOptionAsJson('height', 'viewer_options', false, $this->options, true),
             $this->fixArrayToJs($extensions, ["uml", "colorSyntax"])
         );
 
@@ -230,14 +242,18 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             return "";
         }
         $jsArray = [];
-        foreach ($array as $item) {
+        foreach ($array as $key=>$item) {
+            if (in_array($key, $excludeList)) continue;
+            $options = null;
             if (is_array($item)) {
-                $key = array_key_first($item);
-                if (in_array($key, $excludeList)) continue;
-                array_push($jsArray, '['.$key.','.json_encode($item[$key]).']');
+                if (array_key_exists('options', $item)) {
+                    $options = $item['options'];
+                }
+            }
+            if ($options) {
+                array_push($jsArray, '['.$key.','.json_encode($item['options']).']');
             } else {
-                if (in_array($item, $excludeList)) continue;
-                array_push($jsArray, $item);
+                array_push($jsArray, $key);
             }
         }
 
@@ -290,12 +306,66 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return $this->locale;
     }
 
+    private function getOptionAsJson($key, $keyOption, $userPreferenceConfig, $config, $checkDefaultConfig = false): ?string
+    {
+        return json_encode($this->getOption($key, $keyOption, $userPreferenceConfig, $config, $checkDefaultConfig));
+    }
+
+    private function getOption($key, $keyOption, $userPreferenceConfig, $config, $checkDefaultConfig = false)
+    {
+        if (empty($key)) {
+            if (is_array($userPreferenceConfig) && array_key_exists($keyOption, $userPreferenceConfig)) {
+                return $userPreferenceConfig[$keyOption];
+            } else {
+                if ($checkDefaultConfig) {
+                    $defaultConfig = $config['default_config'];
+                    return $this->getOption($key, $keyOption,$defaultConfig && array_key_exists($defaultConfig, $config['configs']) ? $config['configs'][$defaultConfig]: null, $config);
+                } else {
+                    return $config[$keyOption];
+                }
+            }
+        } else if (is_array($userPreferenceConfig) && array_key_exists($keyOption, $userPreferenceConfig) && is_array($userPreferenceConfig[$keyOption]) && array_key_exists($key, $userPreferenceConfig[$keyOption])) {
+            return $userPreferenceConfig[$keyOption][$key];
+        } else {
+            if ($checkDefaultConfig) {
+                $defaultConfig = $config['default_config'];
+                return $this->getOption($key, $keyOption,$defaultConfig && array_key_exists($defaultConfig, $config['configs']) ? $config['configs'][$defaultConfig]: null, $config);
+            } else {
+                return $config[$keyOption][$key];
+            }
+        }
+    }
+
+    private function getOptionForParent($key, $keyOption, $keyParent, $userPreferenceConfig, $config, $checkDefaultConfig = false)
+    {
+        if (empty($key)) {
+            if (is_array($userPreferenceConfig) && array_key_exists($keyOption, $userPreferenceConfig)) {
+                return $userPreferenceConfig[$keyOption];
+            } else {
+                if ($checkDefaultConfig) {
+                    $defaultConfig = $config['default_config'];
+                    return $this->getOption($key, $keyOption,$defaultConfig && array_key_exists($defaultConfig, $config['configs']) ? $config['configs'][$defaultConfig][$keyParent]: null, $config[$keyParent]);
+                } else {
+                    return $config[$keyParent][$keyOption];
+                }
+            }
+        } else if (is_array($userPreferenceConfig) && array_key_exists($keyOption, $userPreferenceConfig) && is_array($userPreferenceConfig[$keyOption]) && array_key_exists($key, $userPreferenceConfig[$keyOption])) {
+            return $userPreferenceConfig[$keyOption][$key];
+        } else {
+            if ($checkDefaultConfig) {
+                $defaultConfig = $config['default_config'];
+                return $this->getOption($key, $keyOption,$defaultConfig && array_key_exists($defaultConfig, $config['configs']) ? $config['configs'][$defaultConfig][$keyParent]: null, $config[$keyParent]);
+            } else {
+                return $config[$keyParent][$keyOption][$key];
+            }
+        }
+    }
+
     public function renderEditor(string $id, array $config, string $content = null): string
     {
         $config = $this->fixConfigLanguage($config);
 
-        $extensions = array_key_exists('extensions', $config) ? $config['extensions']: $this->options['extensions'];
-        $editorOptions = array_key_exists('editor_options', $config) ? $config['editor_options']: $this->options['editor_options'];
+        $extensions = $this->getOption(null, 'extensions', $config, $this->options, true);
 
         $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
         $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
@@ -311,7 +381,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                     initialEditType: %s,
                     previewStyle: %s,
                     height: %s,
-                    language: %s,
+                    language: "%s",
                     initialValue: content,
                     plugins: [%s],
                     theme: %s,
@@ -321,13 +391,13 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
             $this->fixContentToJs($content),
             $id,
             $id,
-            json_encode($editorOptions['initial_edit_type']),
-            json_encode($editorOptions['preview_style']),
-            json_encode($editorOptions['height']),
+            $this->getOptionAsJson('initial_edit_type', 'editor_options', $config, $this->options, true),
+            $this->getOptionAsJson('preview_style', 'editor_options', $config, $this->options, true),
+            $this->getOptionAsJson('height', 'editor_options', $config, $this->options, true),
             array_key_exists('language', $config) ? $config['language'] : $config['locale'],
             $this->fixArrayToJs($extensions),
-            json_encode($editorOptions['theme']),
-            json_encode($editorOptions['toolbar_items'])
+            $this->getOptionAsJson('theme', 'editor_options', $config, $this->options, true),
+            $this->getOptionAsJson('toolbar_items', 'editor_options', $config, $this->options, true)
         );
 
         return $extsHtml . $editorJsCode . $editorCssCode . $editorContentsCssCode . $editorJsScript;

@@ -89,18 +89,62 @@ teebb_tui_editor:
     #editor_contents_css_path: ~                            # Custom content css path.
     #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
     # ...                                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
-    
-    default_config: basic_config
+
     #editor_options:
         #height: 'auto'                                     # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
         #initial_edit_type: 'wysiwyg'                       # Initial editor type (markdown, wysiwyg)
         #preview_style: 'vertical'                          # Markdown editor's preview style (tab, vertical)
         #theme: 'dark'                                      # override editor color scheme with dark theme
         #toolbar_items:
-            #- ["heading"]
+            #- ['heading', 'bold', 'italic', 'strike']
+            #- ['hr', 'quote']
+            #- ['ul', 'ol', 'task', 'indent', 'outdent']
+            #- ['table', 'image', 'link']
+            #- ['code', 'codeblock']
     #viewer_options:
         #height: 'auto'                                     # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+    #extensions:                                            # extensions must defined as array of plugin_name variable or [plugin_name, [plugin_options]]
+        #chart:                                             # chart custom options
+            #js_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-chart-bundle.js
+            #css_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-chart.min.css
+            #options:
+                #width: 'auto'                              # number|string	'auto'	Default width value
+                #height: 'auto'                             # number|string	'auto'	Default height value
+                #minWidth: 0                                # number	0	Minimum width value
+                #maxWidth: 0                                # number	0	Minimum height value
+                #minHeight: Infinity                        # number    Infinity	Maximum width value
+                #maxHeight: Infinity                        # number	Infinity	Maximum height value
+        #codeSyntaxHighlight:
+            #js_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-code-syntax-highlight-bundle.js
+            #css_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-code-syntax-highlight.css
+        #colorSyntax:                                       # colorSyntax custom options
+            #js_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-color-syntax-bundle.js
+            #css_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-color-syntax.css
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/tui-color-picker.css
+            #options:
+                #preset: ['#181818', '#292929']         # [required] preset	Array.<string>		Preset for color palette
+        #tableMergedCell:
+            #js_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-table-merged-cell-bundle.js
+            #css_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-table-merged-cell.css
+        #uml:                                               # uml custom options
+            #js_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-uml-bundle.js
+            #options:
+                #rendererURL: ~                             # [required]string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
+    #dependencies:                                          # You may add any dependancy that you need here
+        #editor_dark_theme:
+            #css_paths:
+                #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-dark.css
 
+    default_config: basic_config
     configs:
         basic_config:
             to_html: false                                  # Save to database use html syntax?
@@ -110,31 +154,53 @@ teebb_tui_editor:
                 #preview_style: 'vertical'                  # Markdown editor's preview style (tab, vertical)
                 #theme: 'dark'                              # override editor color scheme with dark theme
                 #toolbar_items:
-                    #- ["heading"]
+                    #- ['heading', 'bold', 'italic', 'strike']
+                    #- ['hr', 'quote']
+                    #- ['ul', 'ol', 'task', 'indent', 'outdent']
+                    #- ['table', 'image', 'link']
+                    #- ['code', 'codeblock']
             #viewer_options:
                 #height: 'auto'                             # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-            extensions:                                     # extensions must defined as array of plugin_name variable or {plugin_name, [plugin_options}}
-                - chart                                     # chart default
-                #- chart:                                   # chart custom options
-                    #width: 'auto'                          # number|string	'auto'	Default width value
-                    #height: 'auto'                         # number|string	'auto'	Default height value
-                    #minWidth: 0                            # number	0	Minimum width value
-                    #maxWidth: 0                            # number	0	Minimum height value
-                    #minHeight: Infinity                    # number    Infinity	Maximum width value
-                    #maxHeight: Infinity                    # number	Infinity	Maximum height value
-                - codeSyntaxHighlight
-                - colorSyntax                               # colorSyntax default
-                #- colorSyntax:                             # colorSyntax custom options
-                    #preset: ['#181818', '#292929']     # [required] preset	Array.<string>		Preset for color palette
-                - tableMergedCell
-                - uml                                       # uml default
-                #- uml:                                     # uml custom options
-                    #rendererURL: ~                         # [required]string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
-            toolbar_items: []
-            dependencies:
-                editor_dark_theme:                          # Must include if using 'dark' theme
-                    js_path:
-                    css_path: /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-dark.css
+            extensions:                                            # extensions must defined as array of plugin_name variable or [plugin_name, [plugin_options]]
+                chart:                                             # chart custom options
+                    #js_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-chart-bundle.js
+                    #css_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-chart.min.css
+                    #options:
+                        #width: 'auto'                              # number|string	'auto'	Default width value
+                        #height: 'auto'                             # number|string	'auto'	Default height value
+                        #minWidth: 0                                # number	0	Minimum width value
+                        #maxWidth: 0                                # number	0	Minimum height value
+                        #minHeight: Infinity                        # number    Infinity	Maximum width value
+                        #maxHeight: Infinity                        # number	Infinity	Maximum height value
+                codeSyntaxHighlight:
+                    #js_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-code-syntax-highlight-bundle.js
+                    #css_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-code-syntax-highlight.css
+                colorSyntax:                                       # colorSyntax custom options
+                    #js_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-color-syntax-bundle.js
+                    #css_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-color-syntax.css
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/tui-color-picker.css
+                    #options:
+                        #preset: ['#181818', '#292929']         # [required] preset	Array.<string>		Preset for color palette
+                tableMergedCell:
+                    #js_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-table-merged-cell-bundle.js
+                    #css_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-plugin-table-merged-cell.css
+                uml:                                               # uml custom options
+                    #js_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-uml-bundle.js
+                    #options:
+                        #rendererURL: ~                             # [required]string	'http://www.plantuml.com/plantuml/png/'	URL of plant uml renderer
+            #dependencies:                                          # You may add any dependancy that you need here
+                #editor_dark_theme:                                 # Must include if using 'dark' theme
+                    #css_paths:
+                        #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-dark.css
 
 
 ```
