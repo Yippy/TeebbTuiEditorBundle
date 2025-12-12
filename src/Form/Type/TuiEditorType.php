@@ -39,18 +39,11 @@ final class TuiEditorType extends AbstractType
         if (!$options['enable']) {
             return;
         }
-
-        $builder->setAttribute('jquery', $options['jquery']);
         $builder->setAttribute('base_path', $options['base_path']);
         $builder->setAttribute('locale', $options['locale']);
-        $builder->setAttribute('editor_js_path', $options['editor_js_path']);
-        $builder->setAttribute('viewer_js_path', $options['viewer_js_path']);
-        $builder->setAttribute('editor_css_path', $options['editor_css_path']);
-        $builder->setAttribute('viewer_css_path', $options['viewer_css_path']);
-        $builder->setAttribute('editor_contents_css_path', $options['editor_contents_css_path']);
-        $builder->setAttribute('editor_options', $options['editor_options']);
-        $builder->setAttribute('viewer_options', $options['viewer_options']);
-        $builder->setAttribute('jquery_path', $options['jquery_path']);
+        $builder->setAttribute('jquery', $options['jquery']);
+        $builder->setAttribute('editor', $options['editor']);
+        $builder->setAttribute('viewer', $options['viewer']);
         $builder->setAttribute('config', $this->resolveConfig($options));
         $builder->setAttribute('config_name', $options['config_name']);
         $builder->setAttribute('extensions', $options['extensions']);
@@ -79,17 +72,11 @@ final class TuiEditorType extends AbstractType
             return;
         }
 
-        $view->vars['jquery'] = $config->getAttribute('jquery');
         $view->vars['locale'] = $config->getAttribute('locale');
         $view->vars['base_path'] = $config->getAttribute('base_path');
-        $view->vars['editor_js_path'] = $config->getAttribute('editor_js_path');
-        $view->vars['viewer_js_path'] = $config->getAttribute('viewer_js_path');
-        $view->vars['editor_css_path'] = $config->getAttribute('editor_css_path');
-        $view->vars['viewer_css_path'] = $config->getAttribute('viewer_css_path');
-        $view->vars['editor_contents_css_path'] = $config->getAttribute('editor_contents_css_path');
-        $view->vars['editor_options'] = $config->getAttribute('editor_options');
-        $view->vars['viewer_options'] = $config->getAttribute('viewer_options');
-        $view->vars['jquery_path'] = $config->getAttribute('jquery_path');
+        $view->vars['jquery'] = $config->getAttribute('jquery');
+        $view->vars['editor'] = $config->getAttribute('editor');
+        $view->vars['viewer'] = $config->getAttribute('viewer');
         $view->vars['config'] = $config->getAttribute('config');
         $view->vars['extensions'] = $config->getAttribute('extensions');
         $view->vars['dependencies'] = $config->getAttribute('dependencies');
@@ -102,35 +89,23 @@ final class TuiEditorType extends AbstractType
         $resolver
             ->setDefaults([
                 'enable' => $this->configuration->isEnable(),
-                'jquery' => $this->configuration->isJquery(),
                 'locale' => $this->locale,
                 'base_path' => $this->configuration->getBasePath(),
-                'editor_js_path' => $this->configuration->getEditorJsPath(),
-                'viewer_js_path' => $this->configuration->getViewerJsPath(),
-                'editor_css_path' => $this->configuration->getEditorCssPath(),
-                'viewer_css_path' => $this->configuration->getViewerCssPath(),
-                'editor_contents_css_path' => $this->configuration->getEditorContentsCssPath(),
-                'editor_options' => $this->configuration->getEditorOptions(),
-                'viewer_options' => $this->configuration->getViewerOptions(),
-                'jquery_path' => $this->configuration->getJqueryPath(),
+                'jquery' => $this->configuration->getJquery(),
+                'editor' => $this->configuration->getEditor(),
+                'viewer' => $this->configuration->getViewer(),
                 'config_name' => $this->configuration->getDefaultConfig(),
                 'config' => $this->configuration->getConfigs(),
                 'extensions' => $this->configuration->getExtensions(),
                 'dependencies' => $this->configuration->getDependencies(),
             ])
             ->addAllowedTypes('enable', 'bool')
-            ->addAllowedTypes('jquery', 'bool')
             ->addAllowedTypes('locale', ['string', 'null'])
             ->addAllowedTypes('config_name', ['string', 'null'])
             ->addAllowedTypes('base_path', 'string')
-            ->addAllowedTypes('editor_js_path', 'string')
-            ->addAllowedTypes('viewer_js_path', 'string')
-            ->addAllowedTypes('editor_css_path', 'string')
-            ->addAllowedTypes('viewer_css_path', 'string')
-            ->addAllowedTypes('editor_contents_css_path',  ['string', 'null'])
-            ->addAllowedTypes('editor_options',  'array')
-            ->addAllowedTypes('viewer_options',  'array')
-            ->addAllowedTypes('jquery_path', 'string')
+            ->addAllowedTypes('jquery', 'array')
+            ->addAllowedTypes('editor',  'array')
+            ->addAllowedTypes('viewer',  'array')
             ->addAllowedTypes('config', 'array')
             ->addAllowedTypes('extensions', 'array')
             ->addAllowedTypes('dependencies', 'array')

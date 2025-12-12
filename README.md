@@ -80,29 +80,36 @@ You can add a config file in `config/packages` folder.（Just a simple config, B
 #config/packages/teebb_tuieditor.yaml
 teebb_tui_editor:
     #enable: true                                           # Whether to enable tui.editor.
-    #jquery: true                                           # Whether to enable jquery in dependencies.
-    #jquery_path: ~                                         # Custom jquery path.
-    #editor_js_path: ~                                      # Custom tui.editor js path.
-    #viewer_js_path: ~                                      # Custom tui.viewer js path.
-    #editor_css_path: ~                                     # Custom tui.editor css path.
-    #viewer_css_path: ~                                     # Custom tui.viewer css path.
-    #editor_contents_css_path: ~                            # Custom content css path.
+    #jquery:
+        #enable: false                                      # Whether to enable jquery.
+        #js_paths:                                          #  Custom jquery path.
+            #- /bundles/teebbtuieditor/tui.editor-bundles/js/jquery.min.js
     #asset_repository: 'teebbstudios/tui.editor-bundles'    # Public assets installer repository
     # ...                                                   # more config options, you can see: bin/console debug:config teebb_tui_editor 
 
-    #editor_options:
-        #height: 'auto'                                     # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-        #initial_edit_type: 'wysiwyg'                       # Initial editor type (markdown, wysiwyg)
-        #preview_style: 'vertical'                          # Markdown editor's preview style (tab, vertical)
-        #theme: 'dark'                                      # override editor color scheme with dark theme
-        #toolbar_items:
-            #- ['heading', 'bold', 'italic', 'strike']
-            #- ['hr', 'quote']
-            #- ['ul', 'ol', 'task', 'indent', 'outdent']
-            #- ['table', 'image', 'link']
-            #- ['code', 'codeblock']
-    #viewer_options:
-        #height: 'auto'                                     # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+    #editor:
+        #js_paths:
+            #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-editor-bundle.js
+        #css_paths:
+            #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor.css
+        #options:
+            #height: 'auto'                                 # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+            #initial_edit_type: 'wysiwyg'                   # Initial editor type (markdown, wysiwyg)
+            #preview_style: 'vertical'                      # Markdown editor's preview style (tab, vertical)
+            #theme: 'dark'                                  # override editor color scheme with dark theme
+            #toolbar_items:
+                #- ['heading', 'bold', 'italic', 'strike']
+                #- ['hr', 'quote']
+                #- ['ul', 'ol', 'task', 'indent', 'outdent']
+                #- ['table', 'image', 'link']
+                #- ['code', 'codeblock']
+    #viewer:
+        #js_paths:
+            #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-viewer-bundle.js
+        #css_paths:
+            #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-viewer.css
+        #options:
+            #height: 'auto'                                 # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
     #extensions:                                            # extensions must defined as array of plugin_name variable or [plugin_name, [plugin_options]]
         #chart:                                             # chart custom options
             #js_paths:
@@ -148,19 +155,29 @@ teebb_tui_editor:
     configs:
         basic_config:
             to_html: false                                  # Save to database use html syntax?
-            editor_options:
-                #height: 'auto'                             # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
-                #initial_edit_type: 'wysiwyg'               # Initial editor type (markdown, wysiwyg)
-                #preview_style: 'vertical'                  # Markdown editor's preview style (tab, vertical)
-                #theme: 'dark'                              # override editor color scheme with dark theme
-                #toolbar_items:
-                    #- ['heading', 'bold', 'italic', 'strike']
-                    #- ['hr', 'quote']
-                    #- ['ul', 'ol', 'task', 'indent', 'outdent']
-                    #- ['table', 'image', 'link']
-                    #- ['code', 'codeblock']
-            #viewer_options:
-                #height: 'auto'                             # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+            #editor:
+                #js_paths:
+                    - /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-editor-bundle.js
+                #css_paths:
+                    #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor.css
+                #options:
+                    #height: 'auto'                             # Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+                    #initial_edit_type: 'wysiwyg'               # Initial editor type (markdown, wysiwyg)
+                    #preview_style: 'vertical'                  # Markdown editor's preview style (tab, vertical)
+                    #theme: 'dark'                              # override editor color scheme with dark theme
+                    #toolbar_items:
+                        #- ['heading', 'bold', 'italic', 'strike']
+                        #- ['hr', 'quote']
+                        #- ['ul', 'ol', 'task', 'indent', 'outdent']
+                        #- ['table', 'image', 'link']
+                        #- ['code', 'codeblock']
+            #viewer:
+                #js_paths:
+                    #- /bundles/teebbtuieditor/tui.editor-bundles/js/toast-ui-viewer-bundle.js
+                #css_paths:
+                    #- /bundles/teebbtuieditor/tui.editor-bundles/css/toastui-editor-viewer.css
+                #options:
+                    #height: 'auto'                             # Viewer's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
             extensions:                                            # extensions must defined as array of plugin_name variable or [plugin_name, [plugin_options]]
                 chart:                                             # chart custom options
                     #js_paths:

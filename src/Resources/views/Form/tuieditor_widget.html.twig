@@ -13,10 +13,8 @@
 {% endblock %}
 
 {% block _tuieditor_javascript %}
-
-    {{ tuieditor_editor_widget('editor_'~id, config, value) }}
+    {{ tuieditor_editor_widget('editor_'~id, config, value, { "editor": {editor}} ) }}
     {{ block('_tuieditor_events_hooks') }}
-
 {% endblock %}
 
 {% block _tuieditor_events_hooks %}

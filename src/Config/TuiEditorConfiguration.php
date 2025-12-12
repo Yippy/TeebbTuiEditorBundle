@@ -18,39 +18,9 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     private $toHtml;
 
     /**
-     * @var boolean
-     */
-    private $jquery;
-
-    /**
      * @var string
      */
     private $basePath;
-
-    /**
-     * @var string
-     */
-    private $editorJsPath;
-
-    /**
-     * @var string
-     */
-    private $viewerJsPath;
-
-    /**
-     * @var string
-     */
-    private $editorCssPath;
-
-    /**
-     * @var string|null
-     */
-    private $editorContentsCssPath;
-
-    /**
-     * @var string
-     */
-    private $jqueryPath;
 
     /**
      * @var string|null
@@ -65,12 +35,17 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
     /**
      * @var array
      */
-    private $editorOptions;
+    private $jquery;
 
     /**
      * @var array
      */
-    private $viewerOptions;
+    private $editor;
+
+    /**
+     * @var array
+     */
+    private $viewer;
 
     /**
      * @var array
@@ -94,18 +69,12 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         }
 
         $this->enable = $config['enable'];
-        $this->jquery = $config['jquery'];
         $this->basePath = $config['base_path'];
-        $this->editorJsPath = $config['editor_js_path'];
-        $this->viewerJsPath = $config['viewer_js_path'];
-        $this->editorCssPath = $config['editor_css_path'];
-        $this->viewerCssPath = $config['viewer_css_path'];
-        $this->editorContentsCssPath = $config['editor_contents_css_path'];
-        $this->jqueryPath = $config['jquery_path'];
         $this->defaultConfig = $config['default_config'];
         $this->configs = $config['configs'];
-        $this->editorOptions = $config['editor_options'];
-        $this->viewerOptions = $config['viewer_options'];
+        $this->jquery = $config['jquery'];
+        $this->editor = $config['editor'];
+        $this->viewer = $config['viewer'];
         $this->extensions = $config['extensions'];
         $this->dependencies = $config['dependencies'];
         $this->assetRepository = $config['asset_repository'];
@@ -140,44 +109,9 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->toHtml;
     }
 
-    public function isJquery(): bool
-    {
-        return $this->jquery;
-    }
-
     public function getBasePath(): string
     {
         return $this->basePath;
-    }
-
-    public function getEditorJsPath(): string
-    {
-        return $this->editorJsPath;
-    }
-
-    public function getViewerJsPath(): string
-    {
-        return $this->viewerJsPath;
-    }
-
-    public function getEditorCssPath(): string
-    {
-        return $this->editorCssPath;
-    }
-
-    public function getViewerCssPath(): string
-    {
-        return $this->viewerCssPath;
-    }
-
-    public function getEditorContentsCssPath(): ?string
-    {
-        return $this->editorContentsCssPath;
-    }
-
-    public function getJqueryPath(): string
-    {
-        return $this->jqueryPath;
     }
 
     public function getDefaultConfig(): ?string
@@ -190,14 +124,19 @@ final class TuiEditorConfiguration implements TuiEditorConfigurationInterface
         return $this->configs;
     }
 
-    public function getEditorOptions(): array
+    public function getJquery(): array
     {
-        return $this->editorOptions;
+        return $this->jquery;
     }
 
-    public function getViewerOptions(): array
+    public function getEditor(): array
     {
-        return $this->viewerOptions;
+        return $this->editor;
+    }
+
+    public function getViewer(): array
+    {
+        return $this->viewer;
     }
 
     public function getExtensions(): array

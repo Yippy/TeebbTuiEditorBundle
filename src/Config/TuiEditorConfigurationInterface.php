@@ -12,19 +12,7 @@ interface TuiEditorConfigurationInterface
 
     public function isToHtml(): bool;
 
-    public function isJquery(): bool;
-
     public function getBasePath(): string;
-
-    public function getEditorJsPath(): string;
-
-    public function getViewerJsPath(): string;
-
-    public function getEditorCssPath(): string;
-
-    public function getEditorContentsCssPath(): ?string;
-
-    public function getJqueryPath(): string;
 
     public function getDefaultConfig(): ?string;
 
@@ -34,9 +22,11 @@ interface TuiEditorConfigurationInterface
 
     public function getDependencies(): array;
 
-    public function getEditorOptions(): array;
+    public function getJquery(): array;
 
-    public function getViewerOptions(): array;
+    public function getEditor(): array;
+
+    public function getViewer(): array;
 
     public function getAssetRepository(): string;
 

@@ -24,51 +24,20 @@ final class TuiEditorExtension extends AbstractExtension implements TuiEditorRen
         $options = ['is_safe' => ['html']];
 
         return [
-            new TwigFunction('tuieditor_base_path', [$this, 'renderBasePath'], $options),
-            new TwigFunction('tuieditor_jquery_path', [$this, 'renderJqueryPath'], $options),
-            new TwigFunction('tuieditor_editor_js_path', [$this, 'renderEditorJsPath'], $options),
             new TwigFunction('tuieditor_viewer_widget', [$this, 'renderViewer'], $options),
             new TwigFunction('tuieditor_editor_widget', [$this, 'renderEditor'], $options),
-            new TwigFunction('tuieditor_editor_css_path', [$this, 'renderEditorCssPath'], $options),
-            new TwigFunction('tuieditor_viewer_css_path', [$this, 'renderViewerCssPath'], $options),
-            new TwigFunction('tuieditor_editor_contents_css_path', [$this, 'renderEditorContentsCssPath'], $options),
             new TwigFunction('tuieditor_dependencies', [$this, 'renderDependencies'], $options),
         ];
     }
 
-    public function renderEditorCssPath(string $editorCssPath = null): string
+    public function renderViewer(string $id, string $content, ?array $formConfig): string
     {
-        return $this->renderer->renderEditorCssPath($editorCssPath);
+        return $this->renderer->renderViewer($id, $content, $formConfig);
     }
 
-    public function renderViewerCssPath(string $viewerCssPath = null): string
+    public function renderEditor(string $id, array $config, string $content = null, ?array $formConfig): string
     {
-        return $this->renderer->renderViewerCssPath($viewerCssPath);
-    }
-
-    public function renderEditorContentsCssPath(string $editorContentsCssPath = null): string
-    {
-        return $this->renderer->renderEditorContentsCssPath($editorContentsCssPath);
-    }
-
-    public function renderBasePath(string $basePath): string
-    {
-        return $this->renderer->renderBasePath($basePath);
-    }
-
-    public function renderEditorJsPath(string $editorJsPath = null): string
-    {
-        return $this->renderer->renderEditorJsPath($editorJsPath);
-    }
-
-    public function renderViewer(string $id, string $content, string $viewerJsPath = null): string
-    {
-        return $this->renderer->renderViewer($id, $content, $viewerJsPath);
-    }
-
-    public function renderJqueryPath(string $jqueryPath = null): string
-    {
-        return $this->renderer->renderJqueryPath($jqueryPath);
+        return $this->renderer->renderEditor($id, $config, $content, $formConfig);
     }
 
     public function renderDependencies(array $dependencies = null): string
@@ -76,8 +45,4 @@ final class TuiEditorExtension extends AbstractExtension implements TuiEditorRen
         return $this->renderer->renderDependencies($dependencies);
     }
 
-    public function renderEditor(string $id, array $config, string $content = null): string
-    {
-        return $this->renderer->renderEditor($id, $config, $content);
-    }
 }

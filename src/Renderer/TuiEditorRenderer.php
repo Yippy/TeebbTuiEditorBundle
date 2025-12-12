@@ -66,81 +66,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         $this->locale = $locale;
     }
 
-    public function renderBasePath(string $basePath): string
-    {
-        return $this->fixPath($basePath);
-    }
-
-    public function renderEditorJsPath(string $editorJsPath = null): string
-    {
-        if ($editorJsPath === null) {
-            return $this->fixPath($this->options['editor_js_path']);
-        }
-        return $this->fixPath($editorJsPath);
-    }
-
-    public function renderJqueryPath(string $jqueryPath = null): string
-    {
-        if ($jqueryPath === null) {
-            return $this->fixPath($this->options['jquery_path']);
-        }
-        return $this->fixPath($jqueryPath);
-    }
-
-    public function renderEditorCssPath(string $editorCssPath = null): string
-    {
-        if ($editorCssPath === null) {
-            return $this->fixPath($this->options['editor_css_path']);
-        }
-        return $this->fixPath($editorCssPath);
-    }
-
-    public function renderViewerCssPath(string $viewerCssPath = null): string
-    {
-        if ($viewerCssPath === null) {
-            return $this->fixPath($this->options['viewer_css_path']);
-        }
-        return $this->fixPath($viewerCssPath);
-    }
-
-
-    public function renderEditorContentsCssPath(string $editorContentsCssPath = null): string
-    {
-        if ($editorContentsCssPath === null) {
-            return $this->fixPath($this->options['editor_contents_css_path']);
-        }
-        return $this->fixPath($editorContentsCssPath);
-    }
-
-    public function renderDependencies(array $dependencies = null): string
-    {
-        $dependencies = $this->getOption(null, 'dependencies', $dependencies, $this->options, true);
-
-        $dependenciesJsHtml = "";
-        $dependenciesCssHtml = "";
-
-        if ($this->options['jquery']) {
-            $dependenciesJsHtml .= $this->renderScriptBlock($this->options['jquery_path']);
-        }
-        foreach ($dependencies as $dependencyName => $dependencyConfigs) {
-            if (is_array($dependencyConfigs) && array_key_exists('js_paths',$dependencyConfigs)) {
-                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyConfigs['js_paths']);
-            } else {
-                // Find default
-                $dependencyFindDefault = $this->getOptionForParent('js_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
-                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyFindDefault);
-            }
-            if (is_array($dependencyConfigs) && array_key_exists('css_paths',$dependencyConfigs)) {
-                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyConfigs['css_paths']);
-            } else {
-                // Find default
-                $dependencyFindDefault = $this->getOptionForParent('css_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
-                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyFindDefault);
-            }
-        }
-        return $dependenciesJsHtml . $dependenciesCssHtml;
-    }
-
     public function renderScriptBlock(string $path): string
     {
         return sprintf('<script src="%s"></script>', $this->fixPath($path));
@@ -175,6 +100,32 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return $html;
     }
 
+    public function renderDependencies(array $dependencies = null): string
+    {
+        $dependencies = $this->getOption(null, 'dependencies', $dependencies, $this->options, true);
+
+        $dependenciesJsHtml = "";
+        $dependenciesCssHtml = "";
+
+        foreach ($dependencies as $dependencyName => $dependencyConfigs) {
+            if (is_array($dependencyConfigs) && array_key_exists('js_paths',$dependencyConfigs)) {
+                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyConfigs['js_paths']);
+            } else {
+                // Find default
+                $dependencyFindDefault = $this->getOptionForParent('js_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
+                $dependenciesJsHtml .= $this->retrieveJsPathToHtml($dependencyFindDefault);
+            }
+            if (is_array($dependencyConfigs) && array_key_exists('css_paths',$dependencyConfigs)) {
+                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyConfigs['css_paths']);
+            } else {
+                // Find default
+                $dependencyFindDefault = $this->getOptionForParent('css_paths', $dependencyName, 'dependencies', $dependencies, $this->options, true);
+                $dependenciesCssHtml .= $this->retrieveCssPathToHtml($dependencyFindDefault);
+            }
+        }
+        return $dependenciesJsHtml . $dependenciesCssHtml;
+    }
+
     public function renderExtensions($extensions, array $excludeList = []): string
     {
         $extsJsHtml = "";
@@ -202,40 +153,6 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return $extsJsHtml.$extsCssHtml;
     }
 
-    public function renderViewer(string $id, string $content, string $viewerJsPath = null): string
-    {
-        if (null === $viewerJsPath) {
-            $viewerJsPath = $this->options['viewer_js_path'];
-        }
-
-        $defaultConfig = $this->options['default_config'];
-        $extensions = $this->getOption(null, 'extensions', null, $this->options, true);
-        $viewerJsCode = $this->renderScriptBlock($viewerJsPath);
-        $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
-        $viewerCssCode = $this->renderStyleBlock($this->options['viewer_css_path']);
-
-        $extsHtml = $this->renderExtensions($extensions, ["uml", "colorSyntax"]);
-
-        $viewerJsScript = sprintf(
-            '<script class="code-js">
-                var content = %s;
-                const viewer_%s = new Viewer({
-                    el: document.querySelector("#%s"),
-                    height: %s,
-                    initialValue: content,
-                    plugins: [%s]
-                });
-            </script>',
-            $this->fixContentToJs($content),
-            $id,
-            $id,
-            $this->getOptionAsJson('height', 'viewer_options', false, $this->options, true),
-            $this->fixArrayToJs($extensions, ["uml", "colorSyntax"])
-        );
-
-        return $viewerJsCode . $viewerCssCode. $editorContentsCssCode . $extsHtml . $viewerJsScript;
-    }
-
     private function fixArrayToJs(array $array, array $excludeList = []): string
     {
         if (null == $array) {
@@ -260,7 +177,7 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         return implode(",", $jsArray);
     }
 
-    private function fixContentToJs(string $content): string
+    private function getContentToJson(string $content): string
     {
         if (null == $content) {
             $content = "";
@@ -336,6 +253,11 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         }
     }
 
+    private function getOptionForParentAsJson($key, $keyOption, $keyParent, $userPreferenceConfig, $config, $checkDefaultConfig = false): ?string
+    {
+        return json_encode($this->getOptionForParent($key, $keyOption, $keyParent, $userPreferenceConfig, $config, $checkDefaultConfig));
+    }
+
     private function getOptionForParent($key, $keyOption, $keyParent, $userPreferenceConfig, $config, $checkDefaultConfig = false)
     {
         if (empty($key)) {
@@ -361,22 +283,23 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
         }
     }
 
-    public function renderEditor(string $id, array $config, string $content = null): string
+    public function renderEditor(string $id, array $config, string $content = null, ?array $formConfig): string
     {
         $config = $this->fixConfigLanguage($config);
+        $jqueryEnable = $this->getOption('enable', 'jquery', $formConfig, $this->options, true);
+        $jqueryJsCode = '';
+        if ($jqueryEnable) {
+            $jqueryJsPaths = $this->getOption('js_paths', 'jquery', $formConfig, $this->options, true);
+            $jqueryJsCode = $this->retrieveJsPathToHtml($jqueryJsPaths);
+        }
 
         $extensions = $this->getOption(null, 'extensions', $config, $this->options, true);
-
-        $editorJsCode = $this->renderScriptBlock($this->options['editor_js_path']);
-        $editorCssCode = $this->renderStyleBlock($this->options['editor_css_path']);
-        $editorContentsCssCode = isset($this->options['editor_contents_css_path']) && null !== $this->options['editor_contents_css_path']? $this->renderStyleBlock($this->options['editor_contents_css_path']) : '';
-
-        $extsHtml = $this->renderExtensions($extensions);
+        $extensionsnHtml = $this->renderExtensions($extensions);
 
         $editorJsScript = sprintf(
             '<script class="code-js">
                 var content = %s;
-                const %s = new Editor({
+                const editor_%s = new Editor({
                     el: document.querySelector("#%s"),
                     initialEditType: %s,
                     previewStyle: %s,
@@ -388,18 +311,61 @@ final class TuiEditorRenderer implements TuiEditorRendererInterface
                     toolbarItems: %s
                 });
             </script>',
-            $this->fixContentToJs($content),
+            $this->getContentToJson($content),
             $id,
             $id,
-            $this->getOptionAsJson('initial_edit_type', 'editor_options', $config, $this->options, true),
-            $this->getOptionAsJson('preview_style', 'editor_options', $config, $this->options, true),
-            $this->getOptionAsJson('height', 'editor_options', $config, $this->options, true),
+            $this->getOptionForParentAsJson('initial_edit_type', 'options', 'editor', $formConfig, $this->options, true),
+            $this->getOptionForParentAsJson('preview_style', 'options', 'editor', $formConfig, $this->options, true),
+            $this->getOptionForParentAsJson('height', 'options', 'editor', $formConfig, $this->options, true),
             array_key_exists('language', $config) ? $config['language'] : $config['locale'],
             $this->fixArrayToJs($extensions),
-            $this->getOptionAsJson('theme', 'editor_options', $config, $this->options, true),
-            $this->getOptionAsJson('toolbar_items', 'editor_options', $config, $this->options, true)
+            $this->getOptionForParentAsJson('theme', 'options', 'editor', $formConfig, $this->options, true),
+            $this->getOptionForParentAsJson('toolbar_items', 'options', 'editor', $formConfig, $this->options, true)
         );
 
-        return $extsHtml . $editorJsCode . $editorCssCode . $editorContentsCssCode . $editorJsScript;
+        $editorJsPaths = $this->getOption('js_paths', 'editor', $formConfig, $this->options, true);
+        $editorJsCode = $this->retrieveJsPathToHtml($editorJsPaths);
+
+        $editorCssPaths = $this->getOption('css_paths', 'editor', $formConfig, $this->options, true);
+        $editorCssCode = $this->retrieveCssPathToHtml($editorCssPaths);
+
+        return $extensionsnHtml . $jqueryJsCode . $editorJsCode . $editorCssCode . $editorJsScript;
+    }
+
+    public function renderViewer(string $id, string $content, ?array $formConfig = null): string
+    {
+        $jqueryEnable = $this->getOption('enable', 'jquery', $formConfig, $this->options, true);
+        $jqueryJsCode = '';
+        if ($jqueryEnable) {
+            $jqueryJsPaths = $this->getOption('js_paths', 'jquery', $formConfig, $this->options, true);
+            $jqueryJsCode = $this->retrieveJsPathToHtml($jqueryJsPaths);
+        }
+        $extensions = $this->getOption(null, 'extensions', $formConfig, $this->options, true);
+        $extensionsnHtml = $this->renderExtensions($extensions, ["uml", "colorSyntax"]);
+
+        $viewerJsScript = sprintf(
+            '<script class="code-js">
+                var content = %s;
+                const viewer_%s = new Viewer({
+                    el: document.querySelector("#%s"),
+                    height: %s,
+                    initialValue: content,
+                    plugins: [%s]
+                });
+            </script>',
+            $this->getContentToJson($content),
+            $id,
+            $id,
+            $this->getOptionForParentAsJson('height', 'options', 'viewer', $formConfig, $this->options, true),
+            $this->fixArrayToJs($extensions, ["uml", "colorSyntax"])
+        );
+
+        $viewerJsPaths = $this->getOption('js_paths', 'viewer', $formConfig, $this->options, true);
+        $viewerJsCode = $this->retrieveJsPathToHtml($viewerJsPaths);
+
+        $viewerCssPaths = $this->getOption('css_paths', 'viewer', $formConfig, $this->options, true);
+        $viewerCssCode = $this->retrieveCssPathToHtml($viewerCssPaths);
+
+        return $viewerJsCode . $jqueryJsCode. $viewerCssCode . $extensionsnHtml . $viewerJsScript;
     }
 }
