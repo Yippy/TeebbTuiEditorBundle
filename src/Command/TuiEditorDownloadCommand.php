@@ -13,10 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Teebb\TuiEditorBundle\Installer\TuiEditorInstaller;
 
-#[AsCommand(
-    name: TuiEditorDownloadCommand::defaultName,
-    description: 'Download the lastest tui.editor with all the required libraries.',
-)]
 class TuiEditorDownloadCommand extends Command
 {
     protected static $defaultName = 'tuieditor:install';
@@ -58,7 +54,7 @@ EOF
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
 
         $this->title($output);
@@ -69,10 +65,8 @@ EOF
 
         if ($success) {
             $this->success('tui.editor has been successfully installed...', $output);
-            return Command::SUCCESS;
         } else {
             $this->info('tui.editor installation has been skipped...', $output);
-            return Command::INVALID;
         }
 
     }
